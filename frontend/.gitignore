@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# firebase config
+/sure-walk-backend/firebase-config.js
+
 # testing
 /coverage
 
