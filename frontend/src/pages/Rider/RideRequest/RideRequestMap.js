@@ -129,7 +129,7 @@ function RideRequestMap() {
             <div className="greeting">
               <p>Hello, {firstName}!</p>
               <h2>Where would you like to be picked up?</h2>
-              <p className="helper-text">(Tip: tap to be within the boundary map above)</p>
+              <p className="helper-text">(Tip: Has to be within the boundary map above)</p>
             </div>
             
             <div className="location-input-container">
@@ -176,7 +176,7 @@ function RideRequestMap() {
             <div className="greeting">
               <p>Hello, {firstName}!</p>
               <h2>Where would you like to go?</h2>
-              <p className="helper-text">(Tip: tap to be within the boundary map above)</p>
+              <p className="helper-text">(Tip: Has to be within the boundary map above)</p>
             </div>
             
             <div className="location-input-container">

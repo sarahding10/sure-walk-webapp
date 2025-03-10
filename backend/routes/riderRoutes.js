@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { verifyToken } = require('../middleware/auth.middleware');
-const riderController = require('../controllers/rider.controller');
+const { verifyToken } = require('../middleware/authMiddleware');
+const riderController = require('../controllers/riderController');
 
 // Get previous rides for a user
 router.get('/rides', verifyToken, riderController.getPreviousRides);
