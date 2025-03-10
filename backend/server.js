@@ -4,10 +4,10 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Import routes
-const riderRoutes = require('./routes/rider.routes');
-const driverRoutes = require('./routes/driver.routes');
-const adminRoutes = require('./routes/admin.routes');
-const authRoutes = require('./routes/auth.routes');
+const riderRoutes = require('./routes/riderRoutes');
+const driverRoutes = require('./routes/driverRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 // Initialize express app
 const app = express();

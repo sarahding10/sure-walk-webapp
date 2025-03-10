@@ -1,4 +1,4 @@
-const { db } = require('../config/firebase');
+const { db } = require('../config/db');
 const { Ride } = require('../models/ride.model');
 const { isValidLocation } = require('../utils/location.utils');
 
