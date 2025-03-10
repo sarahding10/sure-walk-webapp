@@ -1,0 +1,60 @@
+/* Container for the entire dashboard */
+.admin-dashboard {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Optional: adds spacing between the sections */
+  padding: 20px;
+}
+
+/* Section for each part of the dashboard */
+.dashboard-section {
+  flex: 1; /* Makes each section take up equal space */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* For the car components section */
+.car-component {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.car-section {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+/* For Rider Requests */
+.rider-request {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.rider-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.rider-request select {
+  padding: 5px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.rider-request h2 {
+  margin-bottom: 10px;
+}
