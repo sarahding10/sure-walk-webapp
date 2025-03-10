@@ -94,10 +94,6 @@ function RideRequestMap() {
     }
   };
 
-  const handlePassengerChange = (e) => {
-    setPassengerCount(parseInt(e.target.value));
-  };
-
   const handleRequestRide = () => {
     // In a real implementation, this would create a ride request in Firebase
     // and navigate to a tracking page
@@ -209,15 +205,6 @@ function RideRequestMap() {
                 ))}
               </div>
             )}
-            
-            <div className="traveling-alone">
-              <span>Traveling alone?</span>
-              <select value={passengerCount} onChange={handlePassengerChange}>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </select>
-            </div>
             
             <div className="navigation-buttons">
               <button className="btn-back" onClick={handleBackClick}>
