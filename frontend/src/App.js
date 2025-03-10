@@ -4,8 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Import other pages
 import LoginRouter from './pages/Rider/LoginFlow/LoginRouter';
-import RiderDashboard from './pages/Rider/RiderDashboard';
-import RideRequest from './pages/Rider/RideRequest';
+import RiderRequest from './pages/Rider/RideRequest/RideRequestMap';
 
 function App() {
   return (
@@ -17,8 +16,7 @@ function App() {
             <Route path="/login/*" element={<LoginRouter />} />
 
             {/* Rider routes */}
-            <Route path="/rider" element={<RiderDashboard />} />
-            <Route path="/rider/request" element={<RideRequest />} />
+            <Route path="/rider/request" element={<RiderRequest />} />
 
             {/* Default redirect */}
             <Route path="*" element={<Navigate to="/login" replace/>} />
