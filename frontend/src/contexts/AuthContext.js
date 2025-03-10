@@ -1,12 +1,19 @@
-// contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, db } from '../firebase/config';
 import { 
+  getAuth, 
+  RecaptchaVerifier, 
   signInWithPhoneNumber, 
-  RecaptchaVerifier,
-  signOut
+  onAuthStateChanged 
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  updateDoc, 
+  serverTimestamp 
+} from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
 
 const AuthContext = createContext();
 
@@ -16,88 +23,83 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Set up RecaptchaVerifier
-  function setupRecaptcha(containerOrId) {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, containerOrId, {
-      'size': 'invisible',
-      'callback': (response) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-      }
-    });
-    return window.recaptchaVerifier;
-  }
-
-  // Sign in with phone number
-  async function signInWithPhone(phoneNumber, appVerifier) {
-    try {
-      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-      window.confirmationResult = confirmationResult;
-      return confirmationResult;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Verify OTP
-  async function verifyOtp(otp) {
-    try {
-      const result = await window.confirmationResult.confirm(otp);
-      const user = result.user;
-      // Check if user exists in database
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      
-      if (!userDoc.exists()) {
-        // New user, set default role as rider
-        await setDoc(doc(db, 'users', user.uid), {
-          phoneNumber: user.phoneNumber,
-          role: 'rider',
-          createdAt: new Date(),
-        });
-        setUserRole('rider');
-      } else {
-        setUserRole(userDoc.data().role);
-      }
-      
-      return user;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Log out
-  function logout() {
-    return signOut(auth);
-  }
-
-  // Auth state listener
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-      if (user) {
-        // Get user role from database
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          setUserRole(userDoc.data().role);
-        }
-      } else {
-        setUserRole(null);
-      }
       setLoading(false);
     });
 
     return unsubscribe;
-  }, []);
+  }, [auth]);
+
+  function setupRecaptcha(containerId) {
+    const recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+      'size': 'invisible'
+    });
+    return recaptchaVerifier;
+  }
+
+  async function signInWithPhone(phoneNumber, recaptchaVerifier) {
+    const confirmation = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+    setConfirmationResult(confirmation);
+    return confirmation;
+  }
+
+  async function verifyOtp(otp) {
+    if (!confirmationResult) throw new Error('No confirmation result found');
+    return await confirmationResult.confirm(otp);
+  }
+
+  // Create or update user profile in Firestore
+  async function updateUserProfile(userData) {
+    if (!currentUser) throw new Error('No authenticated user');
+    
+    const userRef = doc(db, 'users', currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    
+    if (userSnap.exists()) {
+      // Update existing user
+      await updateDoc(userRef, {
+        ...userData,
+        updatedAt: serverTimestamp()
+      });
+    } else {
+      // Create new user
+      await setDoc(userRef, {
+        phoneNumber: currentUser.phoneNumber,
+        ...userData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+    
+    return userRef;
+  }
+
+  // Get user profile from Firestore
+  async function getUserProfile() {
+    if (!currentUser) return null;
+    
+    const userRef = doc(db, 'users', currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    
+    if (userSnap.exists()) {
+      return userSnap.data();
+    }
+    
+    return null;
+  }
 
   const value = {
     currentUser,
-    userRole,
     setupRecaptcha,
     signInWithPhone,
     verifyOtp,
-    logout
+    updateUserProfile,
+    getUserProfile
   };
 
   return (

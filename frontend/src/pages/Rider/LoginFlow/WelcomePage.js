@@ -13,7 +13,7 @@ function WelcomePage() {
     <div className="login-page">
       <div className="welcome-content">
         <div className="logo-container">
-          <img src="/logo.png" alt="SureWalk Logo" className="logo" />
+          <img src="sure-walk-webapp\frontend\src\sure-walk.webp" alt="SureWalk Logo" className="logo" />
           <h1>SureWalk</h1>
           <p className="tagline">Ensuring safety for late night walks!<br />From 7 pm - 2 am</p>
         </div>

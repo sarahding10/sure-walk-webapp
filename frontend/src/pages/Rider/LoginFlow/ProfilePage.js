@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
 import './LoginStyles.css';
 
 function ProfilePage() {
+  const { updateUserProfile } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [utId, setUtId] = useState('');
@@ -21,8 +23,17 @@ function ProfilePage() {
     setLoading(true);
     try {
       // Save user profile to Firestore
-      // This would be handled in a real implementation
-      navigate('/rider');
+      await updateUserProfile({
+        firstName,
+        lastName,
+        utId,
+        displayName: `${firstName} ${lastName}`,
+        role: 'rider'
+      });
+      
+      // Navigate to rider dashboard
+      console.log("hi");
+      navigate('/rider/request');
     } catch (error) {
       setError('Failed to save profile: ' + error.message);
     } finally {
