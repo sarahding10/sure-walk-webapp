@@ -1,11 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { db } from '../../firebase/config';
-import { collection, query, where, onSnapshot, orderBy, limit } from 'firebase/firestore';
-
-const CarComponent = ({ type, assignedRequests, capacity }) => {
-    let lastLocation = assignedRequests
+const CarComponent = ({ type, lastLocation, assignedRequests, capacity }) => {
 
     return (
         <div className="car-component">

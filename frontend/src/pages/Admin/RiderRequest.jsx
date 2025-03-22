@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { db } from '../../firebase/config';
-import { collection, query, where, onSnapshot, orderBy, limit } from 'firebase/firestore';
 
 const RiderRequest = ({ name, pickup, dropoff }) => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
