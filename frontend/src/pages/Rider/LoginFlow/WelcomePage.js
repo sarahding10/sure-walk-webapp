@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginStyles.css';
-import sureWalkLogo from '/sure-walk.webp';
-import utLogo from '/good UT logo.png';
+import sureWalkLogo from '../../../assets/images/sure-walk.webp';
+import utLogo from '../../../assets/images/ut-logo.png';
 
 function WelcomePage() {
   const navigate = useNavigate();
