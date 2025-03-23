@@ -1,6 +1,4 @@
 const { db } = require('../config/db');
-const { Ride } = require('../models/ride.model');
-const { isValidLocation } = require('../utils/location.utils');
 
 exports.getPreviousRides = async (req, res) => {
   try {
@@ -11,7 +9,10 @@ exports.getPreviousRides = async (req, res) => {
       .orderBy('createdAt', 'desc')
       .get();
     
-    const rides = ridesSnapshot.docs.map(doc => Ride.fromFirestore(doc));
+    const rides = ridesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
     
     res.status(200).json({ rides });
   } catch (error) {
@@ -25,8 +26,10 @@ exports.createRideRequest = async (req, res) => {
     const userId = req.user.uid;
     const { pickupLocation, dropoffLocation } = req.body;
     
-    // Validate locations
-    if (!isValidLocation(pickupLocation) || !isValidLocation(dropoffLocation)) {
+    // Basic location validation
+    if (!pickupLocation || !dropoffLocation || 
+        !pickupLocation.latitude || !pickupLocation.longitude ||
+        !dropoffLocation.latitude || !dropoffLocation.longitude) {
       return res.status(400).json({ message: 'Invalid location provided' });
     }
     
@@ -38,16 +41,17 @@ exports.createRideRequest = async (req, res) => {
       });
     }
     
-    // Create new ride request
-    const newRide = new Ride(null, {
+    // Create new ride request directly
+    const newRide = {
       riderId: userId,
       pickupLocation,
       dropoffLocation,
       status: 'pending',
-      createdAt: new Date().toISOString()
-    });
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
     
-    const rideRef = await db.collection('rides').add(newRide.toFirestore());
+    const rideRef = await db.collection('rides').add(newRide);
     
     res.status(201).json({ 
       message: 'Ride request created successfully',
@@ -75,7 +79,11 @@ exports.getRiderStatus = async (req, res) => {
       return res.status(200).json({ hasActiveRide: false });
     }
     
-    const ride = Ride.fromFirestore(ridesSnapshot.docs[0]);
+    const rideDoc = ridesSnapshot.docs[0];
+    const ride = {
+      id: rideDoc.id,
+      ...rideDoc.data()
+    };
     
     // If ride is assigned, get driver info
     let driverInfo = null;
@@ -99,6 +107,85 @@ exports.getRiderStatus = async (req, res) => {
   } catch (error) {
     console.error('Error getting rider status:', error);
     res.status(500).json({ message: 'Failed to get rider status', error: error.message });
+  }
+};
+
+exports.getAssignedDriver = async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    
+    // Get the most recent active ride request for this user that has a driver assigned
+    const ridesSnapshot = await db.collection('rides')
+      .where('riderId', '==', userId)
+      .where('status', 'in', ['assigned', 'inProgress', 'arrived'])
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+    
+    if (ridesSnapshot.empty) {
+      return res.status(404).json({ message: 'No assigned driver found' });
+    }
+    
+    const rideDoc = ridesSnapshot.docs[0];
+    const ride = {
+      id: rideDoc.id,
+      ...rideDoc.data()
+    };
+    
+    if (!ride.driverId) {
+      return res.status(404).json({ message: 'No driver assigned to this ride' });
+    }
+    
+    // Get driver information
+    const driverSnapshot = await db.collection('users').doc(ride.driverId).get();
+    
+    if (!driverSnapshot.exists) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+    
+    const driver = driverSnapshot.data();
+    
+    const driverInfo = {
+      id: driverSnapshot.id,
+      firstName: driver.firstName,
+      lastName: driver.lastName,
+      phoneNumber: driver.phoneNumber,
+      profilePicture: driver.profilePicture || null
+    };
+    
+    // Get vehicle information if available
+    let vehicleInfo = null;
+    if (driver.vehicleId) {
+      const vehicleSnapshot = await db.collection('vehicles').doc(driver.vehicleId).get();
+      if (vehicleSnapshot.exists) {
+        const vehicle = vehicleSnapshot.data();
+        vehicleInfo = {
+          id: vehicleSnapshot.id,
+          make: vehicle.make,
+          model: vehicle.model,
+          color: vehicle.color,
+          licensePlate: vehicle.licensePlate
+        };
+      }
+    }
+    
+    // Current location of driver if available
+    let currentLocation = null;
+    if (ride.driverLocation) {
+      currentLocation = ride.driverLocation;
+    }
+    
+    res.status(200).json({
+      driver: driverInfo,
+      vehicle: vehicleInfo,
+      currentLocation,
+      rideId: ride.id,
+      rideStatus: ride.status,
+      estimatedArrival: ride.estimatedArrival || null
+    });
+  } catch (error) {
+    console.error('Error getting assigned driver:', error);
+    res.status(500).json({ message: 'Failed to get assigned driver', error: error.message });
   }
 };
 
