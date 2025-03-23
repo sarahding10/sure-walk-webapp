@@ -5,8 +5,8 @@ require('dotenv').config();
 
 // Import routes
 const riderRoutes = require('./routes/riderRoutes');
-const driverRoutes = require('./routes/driverRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+// const driverRoutes = require('./routes/driverRoutes');
+// const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 // Initialize express app
@@ -19,8 +19,8 @@ app.use(cors());
 
 // API routes
 app.use('/api/rider', riderRoutes);
-app.use('/api/driver', driverRoutes);
-app.use('/api/admin', adminRoutes);
+// app.use('/api/driver', driverRoutes);
+// app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 
 // Error handling middleware
