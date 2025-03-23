@@ -7,6 +7,7 @@ function RideRequestMap() {
   const { currentUser, getUserProfile } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [step, setStep] = useState('pickup'); // 'pickup', 'dropoff', 'confirm'
   const [pickup, setPickup] = useState('');
   const [dropoff, setDropoff] = useState('');
@@ -94,10 +95,47 @@ function RideRequestMap() {
     }
   };
 
-  const handleRequestRide = () => {
-    // In a real implementation, this would create a ride request in Firebase
-    // and navigate to a tracking page
-    navigate('/rider/tracking');
+  const handleRequestRide = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Create ride request payload
+      const rideRequest = {
+        userId: currentUser.uid,
+        pickupLocation: pickup,
+        dropoffLocation: dropoff,
+        passengerCount: passengerCount,
+        requestTime: new Date().toISOString(),
+        status: 'pending'
+      };
+      
+      // Send request to backend
+      const response = await fetch('http://localhost:5000/api/rider/request-ride', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await currentUser.getIdToken()}`
+        },
+        body: JSON.stringify(rideRequest),
+        // Set a timeout to prevent long-hanging requests
+        timeout: 10000
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create ride request');
+      }
+      
+      const data = await response.json();
+      
+      // Navigate to tracking page with the ride ID
+      navigate(`/rider/tracking/${data.rideId}`);
+    } catch (error) {
+      console.error('Error creating ride request:', error);
+      setError('Failed to create ride request. Please try again.');
+      setLoading(false);
+    }
   };
 
   if (loading) {
