@@ -7,7 +7,7 @@ const riderController = require('../controllers/riderController');
 router.get('/rides', verifyToken, riderController.getPreviousRides);
 
 // Post a new ride request
-router.post('/request', verifyToken, riderController.createRideRequest);
+router.post('/request-ride', verifyToken, riderController.createRideRequest);
 
 // Get rider status
 router.get('/status', verifyToken, riderController.getRiderStatus);

@@ -32,7 +32,6 @@ function ProfilePage() {
       });
       
       // Navigate to rider dashboard
-      console.log("hi");
       navigate('/rider/request');
     } catch (error) {
       setError('Failed to save profile: ' + error.message);

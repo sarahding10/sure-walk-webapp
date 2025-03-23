@@ -1,6 +1,5 @@
 const { db } = require('../config/db');
-const { Ride } = require('../models/ride.model');
-const { isValidLocation } = require('../utils/location.utils');
+const riderService = require('../services/riderService');
 
 exports.getPreviousRides = async (req, res) => {
   try {
@@ -11,7 +10,10 @@ exports.getPreviousRides = async (req, res) => {
       .orderBy('createdAt', 'desc')
       .get();
 
-    const rides = ridesSnapshot.docs.map(doc => Ride.fromFirestore(doc));
+    const rides = ridesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
     res.status(200).json({ rides });
   } catch (error) {
@@ -23,39 +25,34 @@ exports.getPreviousRides = async (req, res) => {
 exports.createRideRequest = async (req, res) => {
   try {
     const userId = req.user.uid;
-    const { pickupLocation, dropoffLocation } = req.body;
+    const { pickupLocation, dropoffLocation, passengerCount } = req.body;
 
-    // Validate locations
-    if (!isValidLocation(pickupLocation) || !isValidLocation(dropoffLocation)) {
-      return res.status(400).json({ message: 'Invalid location provided' });
-    }
-
-    // Check operating hours (7pm - 2am)
-    const currentHour = new Date().getHours();
-    if (currentHour < 19 && currentHour > 2) {
-      return res.status(400).json({
-        message: 'Ride requests are only valid during operating hours (7pm - 2am)'
-      });
-    }
-
-    // Create new ride request
-    const newRide = new Ride(null, {
-      riderId: userId,
+    const rideRequest = await riderService.createRideRequest(
+      userId,
       pickupLocation,
       dropoffLocation,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    });
-
-    const rideRef = await db.collection('rides').add(newRide.toFirestore());
+      passengerCount
+    );
 
     res.status(201).json({
       message: 'Ride request created successfully',
-      rideId: rideRef.id
+      rideId: rideRequest.rideId
     });
   } catch (error) {
     console.error('Error creating ride request:', error);
-    res.status(500).json({ message: 'Failed to create ride request', error: error.message });
+
+    // Handle specific errors with appropriate status codes
+    if (error.message.includes('Invalid location')) {
+      return res.status(400).json({ message: error.message });
+    } else if (error.message.includes('operating hours')) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    // Generic server error
+    res.status(500).json({
+      message: 'Failed to create ride request',
+      error: error.message
+    });
   }
 };
 
@@ -75,7 +72,11 @@ exports.getRiderStatus = async (req, res) => {
       return res.status(200).json({ hasActiveRide: false });
     }
 
-    const ride = Ride.fromFirestore(ridesSnapshot.docs[0]);
+    const rideDoc = ridesSnapshot.docs[0];
+    const ride = {
+      id: rideDoc.id,
+      ...rideDoc.data()
+    };
 
     // If ride is assigned, get driver info
     let driverInfo = null;
@@ -99,6 +100,85 @@ exports.getRiderStatus = async (req, res) => {
   } catch (error) {
     console.error('Error getting rider status:', error);
     res.status(500).json({ message: 'Failed to get rider status', error: error.message });
+  }
+};
+
+exports.getAssignedDriver = async (req, res) => {
+  try {
+    const userId = req.user.uid;
+
+    // Get the most recent active ride request for this user that has a driver assigned
+    const ridesSnapshot = await db.collection('rides')
+      .where('riderId', '==', userId)
+      .where('status', 'in', ['assigned', 'inProgress', 'arrived'])
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+
+    if (ridesSnapshot.empty) {
+      return res.status(404).json({ message: 'No assigned driver found' });
+    }
+
+    const rideDoc = ridesSnapshot.docs[0];
+    const ride = {
+      id: rideDoc.id,
+      ...rideDoc.data()
+    };
+
+    if (!ride.driverId) {
+      return res.status(404).json({ message: 'No driver assigned to this ride' });
+    }
+
+    // Get driver information
+    const driverSnapshot = await db.collection('users').doc(ride.driverId).get();
+
+    if (!driverSnapshot.exists) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+
+    const driver = driverSnapshot.data();
+
+    const driverInfo = {
+      id: driverSnapshot.id,
+      firstName: driver.firstName,
+      lastName: driver.lastName,
+      phoneNumber: driver.phoneNumber,
+      profilePicture: driver.profilePicture || null
+    };
+
+    // Get vehicle information if available
+    let vehicleInfo = null;
+    if (driver.vehicleId) {
+      const vehicleSnapshot = await db.collection('vehicles').doc(driver.vehicleId).get();
+      if (vehicleSnapshot.exists) {
+        const vehicle = vehicleSnapshot.data();
+        vehicleInfo = {
+          id: vehicleSnapshot.id,
+          make: vehicle.make,
+          model: vehicle.model,
+          color: vehicle.color,
+          licensePlate: vehicle.licensePlate
+        };
+      }
+    }
+
+    // Current location of driver if available
+    let currentLocation = null;
+    if (ride.driverLocation) {
+      currentLocation = ride.driverLocation;
+    }
+
+    res.status(200).json({
+      driver: driverInfo,
+      vehicle: vehicleInfo,
+      currentLocation,
+      rideId: ride.id,
+      rideStatus: ride.status,
+      estimatedArrival: ride.estimatedArrival || null
+    });
+  } catch (error) {
+    console.error('Error getting assigned driver:', error);
+    res.status(500).json({ message: 'Failed to get assigned driver', error: error.message });
   }
 };
 

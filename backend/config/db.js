@@ -10,11 +10,9 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const auth = admin.auth();
-const rtdb = admin.database();
 
 module.exports = {
     admin,
     db,
-    auth,
-    rtdb
+    auth
 };
