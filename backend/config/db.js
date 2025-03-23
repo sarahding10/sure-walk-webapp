@@ -5,7 +5,7 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "surewalk link" // TODO: Replace with link
+    databaseURL: "https://sure-walk-webapp.firebaseio.com"
   });
 
 const db = admin.firestore();

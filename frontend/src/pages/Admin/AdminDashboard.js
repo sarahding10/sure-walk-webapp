@@ -44,7 +44,7 @@ function AdminDashboard () {
   return (
       <div>
         <Header />
-        <StatRow pendingRequests={riderRequests.length} activeVehicles={vehicles.length} />
+        <StatRow totalRequests={riderRequests.length} pendingRequests={riderRequests.length} activeVehicles={vehicles.length} />
         <RequestsSection requestsData={riderRequests}/>
       </div>
     );
