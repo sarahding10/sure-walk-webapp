@@ -1,4 +1,5 @@
 const { db } = require('../config/db');
+const riderService = require('../services/riderService');
 
 exports.getPreviousRides = async (req, res) => {
   try {
@@ -24,42 +25,34 @@ exports.getPreviousRides = async (req, res) => {
 exports.createRideRequest = async (req, res) => {
   try {
     const userId = req.user.uid;
-    const { pickupLocation, dropoffLocation } = req.body;
+    const { pickupLocation, dropoffLocation, passengerCount } = req.body;
     
-    // Basic location validation
-    if (!pickupLocation || !dropoffLocation || 
-        !pickupLocation.latitude || !pickupLocation.longitude ||
-        !dropoffLocation.latitude || !dropoffLocation.longitude) {
-      return res.status(400).json({ message: 'Invalid location provided' });
-    }
-    
-    // Check operating hours (7pm - 2am)
-    const currentHour = new Date().getHours();
-    if (currentHour < 19 && currentHour > 2) {
-      return res.status(400).json({ 
-        message: 'Ride requests are only valid during operating hours (7pm - 2am)' 
-      });
-    }
-    
-    // Create new ride request directly
-    const newRide = {
-      riderId: userId,
-      pickupLocation,
-      dropoffLocation,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    const rideRef = await db.collection('rides').add(newRide);
+    const rideRequest = await riderService.createRideRequest(
+      userId, 
+      pickupLocation, 
+      dropoffLocation, 
+      passengerCount
+    );
     
     res.status(201).json({ 
       message: 'Ride request created successfully',
-      rideId: rideRef.id 
+      rideId: rideRequest.rideId 
     });
   } catch (error) {
     console.error('Error creating ride request:', error);
-    res.status(500).json({ message: 'Failed to create ride request', error: error.message });
+    
+    // Handle specific errors with appropriate status codes
+    if (error.message.includes('Invalid location')) {
+      return res.status(400).json({ message: error.message });
+    } else if (error.message.includes('operating hours')) {
+      return res.status(400).json({ message: error.message });
+    }
+    
+    // Generic server error
+    res.status(500).json({ 
+      message: 'Failed to create ride request', 
+      error: error.message 
+    });
   }
 };
 
