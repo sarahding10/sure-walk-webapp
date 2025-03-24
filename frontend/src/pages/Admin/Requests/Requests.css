@@ -21,16 +21,17 @@
     margin: 0;
   }
 
-  .requests-actions {
+  .left-side {
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 1rem;
   }
 
   .filter-button,
   .bulk-assign-button {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.5 rem;
     padding: 0.5rem 0.75rem;
     border-radius: 0.25rem;
     border: 1px solid #e5e7eb;
@@ -67,7 +68,7 @@
 
   .requests-table th,
   .requests-table td {
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 1rem;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
   }
@@ -99,6 +100,15 @@
     pointer-events: none;
   }
 
+  .checkbox {
+    transform: scale(1.5);  /* Optional: You can also use transform scale for resizing */
+  }
+
+  .selected {
+    background-color: #e0f7fa; /* Highlight the selected row with a background color */
+  }
+
+
 
 /* Status badges */
   .status-badge {
@@ -112,6 +122,11 @@
   .status-pending {
     background-color: #e5f0fa;
     color: #3b82f6;
+  }
+
+  .status-assigned {
+    background-color: #fef9c3;
+    color: #eab308;
   }
 
   .status-picked-up {

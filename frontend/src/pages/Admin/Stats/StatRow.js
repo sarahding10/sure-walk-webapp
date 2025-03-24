@@ -2,12 +2,12 @@ import React from 'react';
 import StatCard from './StatCard';
 import './Stats.css'
 
-function StatRow ({totalRequests, pendingRequests, activeVehicles}) {
+function StatRow ({totalRequests, pendingRequests, userCanceledCount, adminCanceledCount, activeVehicles}) {
   const statNames = [
     { title: 'Total # of requests', value: totalRequests },
     { title: 'Pending rides', value: pendingRequests },
-    { title: 'User cancelled rides', value: '5' },
-    { title: 'Admin cancelled rides', value: '0' },
+    { title: 'User cancelled rides', value: userCanceledCount },
+    { title: 'Admin cancelled rides', value: adminCanceledCount },
     { title: 'Total # of vehicles out', value: activeVehicles }
   ];
 

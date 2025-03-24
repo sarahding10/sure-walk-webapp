@@ -1,0 +1,123 @@
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .popup-container {
+    background-color: white;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+  }
+
+  .popup-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+  }
+
+  .popup-content {
+    padding: 20px 24px;
+    display: flex;
+    gap: 30px;
+  }
+
+  .section {
+    flex: 1;
+  }
+
+  .section h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+    color: #444;
+  }
+
+  .rider-card {
+    margin-bottom: 16px;
+    padding: 12px;
+  }
+
+  .rider-name {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .rider-detail {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .vehicle-option {
+    margin-bottom: 16px;
+    padding: 12px;
+    position: relative;
+  }
+
+  .vehicle-option:hover {
+    background-color: #f9f9f9;
+  }
+
+  .vehicle-radio {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .vehicle-radio input[type="radio"] {
+    margin-right: 8px;
+  }
+
+  .vehicle-radio label {
+    font-weight: bold;
+  }
+
+  .vehicle-details {
+    color: #666;
+    font-size: 14px;
+    margin-left: 24px;
+  }
+
+  .popup-footer {
+    padding: 16px 24px;
+    text-align: right;
+  }
+
+  .confirm-button {
+    background-color: #c06224;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .confirm-button:hover {
+    background-color: #a85218;
+  }
