@@ -29,6 +29,7 @@ exports.createRideRequest = async (req, res) => {
 
     const rideRequest = await riderService.createRideRequest(
       userId,
+      displayName,
       pickupLocation,
       dropoffLocation,
       passengerCount

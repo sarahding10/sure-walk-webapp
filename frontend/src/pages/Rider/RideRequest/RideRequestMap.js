@@ -47,12 +47,12 @@ function RideRequestMap() {
   useEffect(() => {
     // Filter suggestions based on input
     if (step === 'pickup') {
-      const filtered = suggestions.filter(suggestion => 
+      const filtered = suggestions.filter(suggestion =>
         suggestion.toLowerCase().includes(pickup.toLowerCase())
       );
       setFilteredSuggestions(filtered.slice(0, 3));
     } else if (step === 'dropoff') {
-      const filtered = suggestions.filter(suggestion => 
+      const filtered = suggestions.filter(suggestion =>
         suggestion.toLowerCase().includes(dropoff.toLowerCase())
       );
       setFilteredSuggestions(filtered.slice(0, 3));
@@ -98,18 +98,19 @@ function RideRequestMap() {
   const handleRequestRide = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // Create ride request payload
       const rideRequest = {
         userId: currentUser.uid,
+        displayName: currentUser.displayName,
         pickupLocation: pickup,
         dropoffLocation: dropoff,
         passengerCount: passengerCount,
         requestTime: new Date().toISOString(),
         status: 'pending'
       };
-      
+
       // Send request to backend
       const response = await fetch('http://localhost:5000/api/rider/request-ride', {
         method: 'POST',
@@ -121,14 +122,14 @@ function RideRequestMap() {
         // Set a timeout to prevent long-hanging requests
         timeout: 10000
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to create ride request');
       }
-      
+
       const data = await response.json();
-      
+
       // Navigate to tracking page with the ride ID
       navigate(`/rider/tracking/${data.rideId}`);
     } catch (error) {
@@ -156,20 +157,20 @@ function RideRequestMap() {
             loading="lazy"
         ></iframe>
       </div>
-      
+
       <div className="ride-request-panel">
         {step === 'pickup' && (
           <>
             <div className="panel-header">
               <div className="queue-info">Queue: {queueSize} people ahead of you</div>
             </div>
-            
+
             <div className="greeting">
               <p>Hello, {firstName}!</p>
               <h2>Where would you like to be picked up?</h2>
               <p className="helper-text">(Tip: Has to be within the boundary map above)</p>
             </div>
-            
+
             <div className="location-input-container">
               <input
                 type="text"
@@ -180,14 +181,14 @@ function RideRequestMap() {
               />
               <span className="search-icon">🔍</span>
             </div>
-            
+
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div className="suggestions-container">
                 <div className="suggestions-header">
                   <span>Suggestions</span>
                   <button className="see-more-btn">see more?</button>
                 </div>
-                
+
                 {filteredSuggestions.map((suggestion, index) => (
                   <div key={index} className="suggestion-item" onClick={() => handleSuggestionClick(suggestion)}>
                     <span className="location-pin">📍</span>
@@ -196,7 +197,7 @@ function RideRequestMap() {
                 ))}
               </div>
             )}
-            
+
             <div className="navigation-buttons">
               <button className="btn-next" onClick={handleNextClick} disabled={!pickup}>
                 Next
@@ -204,19 +205,19 @@ function RideRequestMap() {
             </div>
           </>
         )}
-        
+
         {step === 'dropoff' && (
           <>
             <div className="panel-header">
               <div className="queue-info">Queue: {queueSize} people ahead of you</div>
             </div>
-            
+
             <div className="greeting">
               <p>Hello, {firstName}!</p>
               <h2>Where would you like to go?</h2>
               <p className="helper-text">(Tip: Has to be within the boundary map above)</p>
             </div>
-            
+
             <div className="location-input-container">
               <input
                 type="text"
@@ -227,14 +228,14 @@ function RideRequestMap() {
               />
               <span className="search-icon">🔍</span>
             </div>
-            
+
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div className="suggestions-container">
                 <div className="suggestions-header">
                   <span>Suggestions</span>
                   <button className="see-more-btn">see more?</button>
                 </div>
-                
+
                 {filteredSuggestions.map((suggestion, index) => (
                   <div key={index} className="suggestion-item" onClick={() => handleSuggestionClick(suggestion)}>
                     <span className="location-pin">📍</span>
@@ -243,7 +244,7 @@ function RideRequestMap() {
                 ))}
               </div>
             )}
-            
+
             <div className="navigation-buttons">
               <button className="btn-back" onClick={handleBackClick}>
                 <span className="back-arrow">←</span>
@@ -254,14 +255,14 @@ function RideRequestMap() {
             </div>
           </>
         )}
-        
+
         {step === 'confirm' && (
           <>
             <div className="confirmation-header">
               <h2>Confirm your ride!</h2>
               <p>Make sure everything below is correct</p>
             </div>
-            
+
             <div className="ride-details">
               <div className="detail-item">
                 <div className="icon pickup-icon">👤</div>
@@ -270,9 +271,9 @@ function RideRequestMap() {
                   <p className="detail-value">{pickup}</p>
                 </div>
               </div>
-              
+
               <div className="connector-line"></div>
-              
+
               <div className="detail-item">
                 <div className="icon dropoff-icon">📍</div>
                 <div className="detail-content">
@@ -281,7 +282,7 @@ function RideRequestMap() {
                 </div>
               </div>
             </div>
-            
+
             <div className="navigation-buttons">
               <button className="btn-back" onClick={handleBackClick}>
                 <span className="back-arrow">←</span>
