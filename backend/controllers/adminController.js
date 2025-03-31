@@ -50,10 +50,10 @@ exports.getUnhandledRides = async (req, res) => {
 // Assign request to vehicle
 exports.assignRideToVehicle = async (req, res) => {
     try {
-      const { requestIds, vehicleId, vehicleType } = req.body;
+      const { requestIds, vehicleId, vehicleName } = req.body;
 
-      if (!requestIds || requestIds.length === 0 || !vehicleId || !vehicleType) {
-        return res.status(400).json({ message: "Missing requestIds, vehicleId, or vehicleType" });
+      if (!requestIds || requestIds.length === 0 || !vehicleId || !vehicleName) {
+        return res.status(400).json({ message: "Missing requestIds, vehicleId, or vehicleName" });
       }
 
       const vehicleRef = db.collection("vehicles").doc(vehicleId);
@@ -64,9 +64,9 @@ exports.assignRideToVehicle = async (req, res) => {
         requestIds.forEach((requestId) => {
           const requestRef = db.collection("requests").doc(requestId);
           transaction.update(requestRef, {
-            driverId: vehicleId,
+            vehicleId: vehicleId,
             status: "assigned",
-            assignedVehicle: vehicleType, // Use vehicleType passed from frontend
+            assignedVehicle: vehicleName,
           });
         });
 
