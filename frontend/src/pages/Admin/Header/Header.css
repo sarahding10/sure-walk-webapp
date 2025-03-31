@@ -1,5 +1,9 @@
 header {
     background-color: #C35900;
-    padding: 10px 20px;
+    padding: 15px 25px;
     color: white;
   }
+
+img {
+  width: 10%;
+}

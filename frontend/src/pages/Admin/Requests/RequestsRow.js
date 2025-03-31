@@ -37,18 +37,17 @@ const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle })
     >
       {/* Checkbox column */}
       <td className="checkbox-column">
-        {request.status.toLowerCase() === 'pending' && (
-            <input
-                type="checkbox"
-                checked={selected}
-                onChange={() => handleSelectRow(request.id)}
-                className="checkbox" // Apply custom class to make the checkbox bigger
-            />
-        )}
+        <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => handleSelectRow(request.id)}
+            className="checkbox"
+            disabled={isDisabled}
+        />
         </td>
 
       {/* Request details */}
-      <td>{request.name}</td>
+      <td>{request.displayName}</td>
       <td>{request.pickupLocation}</td>
       <td>{request.dropoffLocation}</td>
       <td>

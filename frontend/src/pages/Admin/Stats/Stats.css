@@ -2,8 +2,10 @@
 .statistics-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-    margin: 1rem;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: #E1DEDC;
+    width: 100%;
   }
 
   @media (max-width: 1200px) {
@@ -26,20 +28,19 @@
 
   /* StatCard.css */
   .stat-card {
-    background-color: white;
-    border-radius: 0.5rem;
+    background-color: #F8F5F4;
+    border-radius: 8px;
     padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .stat-title {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #756D66;
     margin-bottom: 0.5rem;
   }
 
   .stat-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #111827;
+    color: #2F2A25;
   }

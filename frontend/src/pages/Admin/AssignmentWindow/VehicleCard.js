@@ -2,7 +2,6 @@ import React from 'react';
 import './VehicleWindow.css';
 
 const VehicleCard = ({ vehicle, selectedVehicle, setSelectedVehicle }) => {
-    console.log("VehicleCard props:", { vehicle, selectedVehicle });
   const assignedRidesCount = vehicle.assignedRequests && Array.isArray(vehicle.assignedRequests)
     ? vehicle.assignedRequests.length
     : 0;
@@ -21,7 +20,7 @@ const VehicleCard = ({ vehicle, selectedVehicle, setSelectedVehicle }) => {
           onChange={() => setSelectedVehicle(vehicle)}
         />
         <label htmlFor={vehicle.id} style={{ opacity: isDisabled ? 0.5 : 1 }}>
-          {vehicle.type} • {assignedRidesCount}/{vehicle.capacity} {isDisabled && "(At capacity)"}
+          {vehicle.displayName} • {assignedRidesCount}/{vehicle.capacity} {isDisabled && "(At capacity)"}
         </label>
       </div>
 

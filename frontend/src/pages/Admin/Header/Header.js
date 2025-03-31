@@ -1,10 +1,11 @@
 import React from 'react';
 import './Header.css';
+import sureWalkTitle from '../../../assets/images/sure-walk-title.png';
 
 function Header() {
     return (
         <header>
-            <h1>Sure Walk</h1>
+            <img src={sureWalkTitle} alt="Sure Walk" />
         </header>
     )
 }

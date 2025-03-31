@@ -43,7 +43,7 @@ const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests }) => {
         body: JSON.stringify({
           requestIds: selectedRequests.map((r) => r.id),
           vehicleId: selectedVehicle.id,
-          vehicleType: selectedVehicle.type,
+          vehicleName: selectedVehicle.displayName,
         }),
       });
 

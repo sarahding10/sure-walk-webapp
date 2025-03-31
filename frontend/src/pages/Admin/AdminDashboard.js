@@ -4,6 +4,7 @@ import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestor
 import Header from './Header/Header';
 import RequestsSection from './Requests/RequestsSection';
 import StatRow from './Stats/StatRow';
+import './AdminDashboard.css'
 
 function AdminDashboard () {
   const [riderRequests, setRiderRequests] = useState([]);
@@ -15,15 +16,15 @@ function AdminDashboard () {
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
-    // Set shift start (5 PM today)
-    const shiftStart = new Date(today.setHours(17, 0, 0, 0)); // 5 PM today
+    // // Set shift start (5 PM today)
+    // const shiftStart = new Date(today.setHours(17, 0, 0, 0)); // 5 PM today
 
-    // Set shift end (5 AM tomorrow)
-    const shiftEnd = new Date(tomorrow.setHours(5, 0, 0, 0)); // 5 AM tomorrow
+    // // Set shift end (5 AM tomorrow)
+    // const shiftEnd = new Date(tomorrow.setHours(5, 0, 0, 0)); // 5 AM tomorrow
 
     // By day for testing
-    // const shiftStart = new Date(today.setHours(0, 0, 0, 0)); // midnight
-    // const shiftEnd = new Date(today.setHours(24, 24, 24, 24)); // midnight
+    const shiftStart = new Date(today.setHours(0, 0, 0, 0)); // midnight
+    const shiftEnd = new Date(today.setHours(24, 24, 24, 24)); // midnight
 
     // requests query for the same day
     const riderRequestsRef = collection(db, 'requests');

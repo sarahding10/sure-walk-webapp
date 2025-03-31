@@ -1,22 +1,20 @@
 /* RequestsSection.css */
 .requests-section {
-    background-color: white;
+    background-color: #F8F5F4;
     border-radius: 0.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-top: 1.5rem;
+    width: 100vw;
+    overflow-y: auto;
   }
 
 /* RequestsHeader.css */
   .requests-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem;
   }
 
   .requests-title {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
   }
@@ -27,27 +25,37 @@
     gap: 1rem;
   }
 
+  .filter-button {
+    background-color: #E1DEDC;
+    padding: 0.25rem 0.5rem;
+  }
+
   .filter-button,
   .bulk-assign-button {
     display: flex;
     align-items: center;
     gap: 0.5 rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem;
-    border: 1px solid #e5e7eb;
-    background-color: white;
+    border-radius: 8px;
+    border: none;
     font-size: 0.875rem;
     cursor: pointer;
     transition: background-color 0.2s;
   }
 
-  .filter-button:hover,
+  /* .filter-button:hover,
   .bulk-assign-button:hover {
     background-color: #f9fafb;
-  }
+  } */
 
   .bulk-assign-button.active {
     background-color: #e5e7eb;
+  }
+
+  .bulk-assign-button {
+    background-color: #A19F9C;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    font-weight: bold;
   }
 
   .filter-button svg,
@@ -59,32 +67,47 @@
 /* RequestsTable.css */
   .requests-table-container {
     overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 1.5rem;
   }
 
   .requests-table {
-    width: 100%;
     border-collapse: collapse;
+    width: 100%;
   }
 
   .requests-table th,
   .requests-table td {
-    padding: 0.6rem 1rem;
+    padding: 1rem 1.5rem;
     text-align: left;
-    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .requests-table td {
+    padding: .75rem 1rem;
   }
 
   .requests-table th {
-    font-weight: 600;
-    color: #4b5563;
-    font-size: 0.875rem;
+    color: #2F2A25;
+    background-color: #D1CFCE;
+    font-weight: bold;
   }
 
-  .requests-table tr:hover {
-    background-color: #f9fafb;
+  .requests-table tr:nth-child(even) {
+    background-color: #D1CFCE;
   }
+
+  .requests-table tr:nth-child(odd) {
+    background-color: #E1DEDC;
+  }
+
+  /* .requests-table tr:hover {
+    background-color: #f9fafb;
+  } */
 
   .requests-table tr.selected {
-    background-color: #f3f4f6;
+    background-color: #F5E3C8;
   }
 
   .checkbox-column {
@@ -101,56 +124,66 @@
   }
 
   .checkbox {
-    transform: scale(1.5);  /* Optional: You can also use transform scale for resizing */
+    transform: scale(2);  /* Optional: You can also use transform scale for resizing */
+    border-color: #2F2A25;
+    border-width: 2px;
+  }
+
+  input[type=checkbox] {
+    accent-color: #BF5700;
+  }
+
+  .checkbox:disabled {
+    pointer-events: none;
+    opacity: 1;
+    background-color: #756D66;
   }
 
   .selected {
-    background-color: #e0f7fa; /* Highlight the selected row with a background color */
+    background-color: #F5E3C8; /* Highlight the selected row with a background color */
   }
-
 
 
 /* Status badges */
   .status-badge {
     display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
   }
 
   .status-pending {
-    background-color: #e5f0fa;
-    color: #3b82f6;
+    background-color: #CDE9F9;
+    color: #2F2A25;
   }
 
   .status-assigned {
-    background-color: #fef9c3;
-    color: #eab308;
+    background-color: #F99AD3;
+    color: #2F2A25;
   }
 
   .status-picked-up {
     background-color: #e0e7ff;
-    color: #6366f1;
+    color: #2F2A25;
   }
 
   .status-complete {
-    background-color: #dcfce7;
-    color: #10b981;
+    background-color: #25B85B;
+    color: #F8F5F4;
   }
 
   .status-cancelled {
-    background-color: #fee2e2;
-    color: #ef4444;
+    background-color: #CE1313;
+    color: #F8F5F4;
   }
 
   /* Action buttons */
   .assign-button {
-    background-color: #dd6b20;
+    background-color: #BF5700;
     color: white;
     border: none;
-    border-radius: 0.25rem;
-    padding: 0.375rem 0.75rem;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
     cursor: pointer;
     margin-right: 0.5rem;
@@ -166,11 +199,4 @@
     cursor: pointer;
     padding: 0.25rem;
     border-radius: 0.25rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .more-button:hover {
-    background-color: #f3f4f6;
   }
