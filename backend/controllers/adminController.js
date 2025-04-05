@@ -38,8 +38,8 @@ exports.getUnhandledRides = async (req, res) => {
     }
 }
 
-// Get detailed data about cars/riders/drivers
-// exports.getDetailedData = async (req, res) => {
+// Get detailed data about rider
+// exports.getRiderDetails = async (req, res) => {
 //     try {
 //         // const activeDrivers =
 //     } catch (err) {

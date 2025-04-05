@@ -7,9 +7,6 @@ const adminController = require('../controllers/adminController');
 // router.get('/available-drivers', verifyToken, verifyAdmin, adminController.getAvailableDrivers);
 router.get('/available-vehicles', adminController.getAvailableVehicles)
 
-// // Get unhandled ride requests
-// router.get('/unhandled-rides', verifyToken, verifyAdmin, adminController.getUnhandledRides);
-
 // // Get detailed data about cars/riders/drivers
 // router.get('/data', verifyToken, verifyAdmin, adminController.getDetailedData);
 // router.get('/data', adminController.getDetailedData)
