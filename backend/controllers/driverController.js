@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
         const vehiclesSnapshot = await db
         .collection('vehicles')
         .where('vehicleType', '==', vehicleType)
-        .orderBy('typeNum', 'asc')
+        .orderBy('typeIndex', 'asc')
         .get();
 
         let lastAvailable = "";
@@ -42,12 +42,12 @@ exports.login = async (req, res) => {
         if (!lastAvailable) {
             // Get the last sorted value - should be current largest index to add to
             const currMaxIndex = vehiclesSnapshot.docs.length > 0
-                ? vehiclesSnapshot.docs[vehiclesSnapshot.docs.length - 1].data().typeNum: 0;
+                ? vehiclesSnapshot.docs[vehiclesSnapshot.docs.length - 1].data().typeIndex: 0;
 
             const newVehicle = {
                 type: vehicleType,
                 driver: driverId,
-                vehicleIndex: currMaxIndex + 1,
+                typeIndex: currMaxIndex + 1,
                 lastLocation: 'Jester West Dormitory',
                 capacity: typeToCapacity.get(vehicleType),
                 assignedRequests: []
