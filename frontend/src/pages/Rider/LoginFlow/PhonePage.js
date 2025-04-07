@@ -28,7 +28,7 @@ function PhonePage() {
     }
   };
 
-  const goToFindAccount = () => {
+  const goToEmployeeLogin = () => {
     // This would typically navigate to an account recovery page
     // navigate('/login/find-account');
   };
@@ -83,9 +83,8 @@ function PhonePage() {
         </div>
         
         <div className="find-account">
-          <button className="btn-link" onClick={goToFindAccount}>
-            <span className="search-icon">🔍</span>
-            Find my account
+          <button className="btn-link" onClick={goToEmployeeLogin}>
+            Log in as employee
           </button>
         </div>
       </div>
