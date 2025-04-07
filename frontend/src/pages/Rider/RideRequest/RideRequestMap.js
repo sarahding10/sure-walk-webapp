@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import './RideRequestStyles.css';
@@ -12,7 +12,16 @@ function RideRequestMap() {
   const [pickup, setPickup] = useState('');
   const [dropoff, setDropoff] = useState('');
   const [queueSize, setQueueSize] = useState(5);
+  const [passengerCount, setPassengerCount] = useState(1);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  // Adding references for the autocomplete inputs and markers
+  const pickupInputRef = useRef(null);
+  const dropoffInputRef = useRef(null);
+  const pickupMarkerRef = useRef(null);
+  const dropoffMarkerRef = useRef(null);
+  const navigate = useNavigate();
+  
+  // Fallback suggestions list if Places API fails
   const [suggestions, setSuggestions] = useState([
     'Jester West Dormitory',
     'Belmont Hall',
@@ -24,8 +33,6 @@ function RideRequestMap() {
     'Parlin Hall (PAR)'
   ]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [passengerCount, setPassengerCount] = useState(1);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadUserProfile() {
@@ -44,8 +51,29 @@ function RideRequestMap() {
     }
   }, [currentUser, getUserProfile]);
 
+  // Load Google Maps API
   useEffect(() => {
-    // Filter suggestions based on input
+    // Check if Google Maps script is already loaded
+    if (!window.google || !window.google.maps) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.onload = initializePlacesAPI;
+      document.head.appendChild(script);
+      
+      return () => {
+        if (document.head.contains(script)) {
+          document.head.removeChild(script);
+        }
+      };
+    } else {
+      initializePlacesAPI();
+    }
+  }, []);
+
+  // Filter suggestions based on input (fallback)
+  useEffect(() => {
     if (step === 'pickup') {
       const filtered = suggestions.filter(suggestion =>
         suggestion.toLowerCase().includes(pickup.toLowerCase())
@@ -58,6 +86,66 @@ function RideRequestMap() {
       setFilteredSuggestions(filtered.slice(0, 3));
     }
   }, [pickup, dropoff, step, suggestions]);
+
+  function initializePlacesAPI() {
+    if (window.google && window.google.maps) {
+      // Initialize autocomplete for pickup
+      const pickupAutocomplete = new window.google.maps.places.Autocomplete(
+        document.getElementById('pickup-input'),
+        {
+          componentRestrictions: { country: 'us' },
+          fields: ['place_id', 'formatted_address', 'geometry', 'name']
+        }
+      );
+      
+      // Initialize autocomplete for dropoff
+      const dropoffAutocomplete = new window.google.maps.places.Autocomplete(
+        document.getElementById('dropoff-input'),
+        {
+          componentRestrictions: { country: 'us' },
+          fields: ['place_id', 'formatted_address', 'geometry', 'name']
+        }
+      );
+      
+      // Add listener for pickup autocomplete
+      pickupAutocomplete.addListener('place_changed', () => {
+        const place = pickupAutocomplete.getPlace();
+        if (place.geometry) {
+          setPickup(place.formatted_address || place.name);
+          setShowSuggestions(false);
+          
+          // Create a marker for the pickup location if we wanted to show it on a map
+          // Since we're keeping the iframe map, we store the reference but don't display it
+          pickupMarkerRef.current = {
+            position: {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            },
+            title: place.name
+          };
+        }
+      });
+      
+      // Add listener for dropoff autocomplete
+      dropoffAutocomplete.addListener('place_changed', () => {
+        const place = dropoffAutocomplete.getPlace();
+        if (place.geometry) {
+          setDropoff(place.formatted_address || place.name);
+          setShowSuggestions(false);
+          
+          // Create a marker for the dropoff location if we wanted to show it on a map
+          // Since we're keeping the iframe map, we store the reference but don't display it
+          dropoffMarkerRef.current = {
+            position: {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            },
+            title: place.name
+          };
+        }
+      });
+    }
+  }
 
   const handlePickupChange = (e) => {
     setPickup(e.target.value);
@@ -82,6 +170,11 @@ function RideRequestMap() {
   const handleNextClick = () => {
     if (step === 'pickup' && pickup) {
       setStep('dropoff');
+      setTimeout(() => {
+        if (dropoffInputRef.current) {
+          dropoffInputRef.current.focus();
+        }
+      }, 100);
     } else if (step === 'dropoff' && dropoff) {
       setStep('confirm');
     }
@@ -90,6 +183,11 @@ function RideRequestMap() {
   const handleBackClick = () => {
     if (step === 'dropoff') {
       setStep('pickup');
+      setTimeout(() => {
+        if (pickupInputRef.current) {
+          pickupInputRef.current.focus();
+        }
+      }, 100);
     } else if (step === 'confirm') {
       setStep('dropoff');
     }
@@ -173,6 +271,8 @@ function RideRequestMap() {
 
             <div className="location-input-container">
               <input
+                id="pickup-input"
+                ref={pickupInputRef}
                 type="text"
                 value={pickup}
                 onChange={handlePickupChange}
@@ -220,6 +320,8 @@ function RideRequestMap() {
 
             <div className="location-input-container">
               <input
+                id="dropoff-input"
+                ref={dropoffInputRef}
                 type="text"
                 value={dropoff}
                 onChange={handleDropoffChange}
@@ -281,7 +383,26 @@ function RideRequestMap() {
                   <p className="detail-value">{dropoff}</p>
                 </div>
               </div>
+              
+              <div className="passengers-selector">
+                <p>Number of Passengers:</p>
+                <div className="passenger-controls">
+                  <button 
+                    className="passenger-btn" 
+                    onClick={() => setPassengerCount(Math.max(1, passengerCount - 1))}
+                    disabled={passengerCount <= 1}
+                  >-</button>
+                  <span className="passenger-count">{passengerCount}</span>
+                  <button 
+                    className="passenger-btn" 
+                    onClick={() => setPassengerCount(Math.min(4, passengerCount + 1))}
+                    disabled={passengerCount >= 4}
+                  >+</button>
+                </div>
+              </div>
             </div>
+
+            {error && <div className="error-message">{error}</div>}
 
             <div className="navigation-buttons">
               <button className="btn-back" onClick={handleBackClick}>
