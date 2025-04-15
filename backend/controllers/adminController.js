@@ -38,10 +38,35 @@ exports.getUnhandledRides = async (req, res) => {
     }
 }
 
+// Admin cancel ride request
+exports.cancelRequest = async (req, res) => {
+  try {
+    const { requestId } = req.body;
+
+    if (!requestId) {
+      return res.status(400).json({message: "Missing requestId"});
+    }
+
+    const requestRef = db.collection("requests").doc(requestId);
+
+    await db.runTransaction(async (transaction) => {
+      transaction.update(requestRef, {
+        status: "cancelled",
+        canceledBy: "admin"
+      })
+    })
+  }
+  catch (err) {
+    res.status(500).json({ message : 'Error changing status to canceled'})
+  }
+}
+
 // Get detailed data about rider
 // exports.getRiderDetails = async (req, res) => {
-//     try {
-//         // const activeDrivers =
+//   try {
+//     const requestRef = await db.collection("requests").docs(requestId);
+
+//     res.status(200).json(requestRef);
 //     } catch (err) {
 //         res.status(500).json({ message : 'Error fetching active drivers'})
 //     }

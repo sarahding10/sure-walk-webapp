@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import DriverDashboard from './pages/Driver/DriverDashboard';
 
 // Import other pages
 import LoginRouter from './pages/Rider/LoginFlow/LoginRouter';
@@ -21,6 +22,9 @@ function App() {
 
             {/* Admin routes */}
             <Route path="/admin" element={<AdminDashboard />} />
+
+            {/* Driver routes */}
+            <Route path="/driver" element={<DriverDashboard />} />
 
             {/* Default redirect */}
             <Route path="*" element={<Navigate to="/login" replace/>} />

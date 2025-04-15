@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import './Requests.css';
 
-const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle }) => {
+const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle, handleMoreButton }) => {
   // Function to determine status badge class
   const getStatusClass = (status) => {
     switch (status.toLowerCase()) {
@@ -20,6 +20,20 @@ const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle })
     }
   };
 
+  const getTime = (timestamp) => {
+    const date = timestamp.toDate();
+
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes; // Add leading zero if minutes are less than 10
+
+    return `${hours}:${minutes} ${ampm}`;
+  }
+
   // Disable selection for non-pending requests
   const isDisabled = request.status.toLowerCase() !== 'pending';
 
@@ -27,7 +41,7 @@ const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle })
     if (request.status.toLowerCase() === 'pending') {
         handleSelectRow(request.id); // Only allow selection for pending rows
     }
-    };
+  };
 
   return (
     <tr
@@ -47,7 +61,10 @@ const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle })
         </td>
 
       {/* Request details */}
-      <td>{request.displayName}</td>
+      <td className="name-section">
+        <span>{request.displayName}</span>
+        <span className="timestamp">{getTime(request.createdAt)}</span>
+      </td>
       <td>{request.pickupLocation}</td>
       <td>{request.dropoffLocation}</td>
       <td>
@@ -56,12 +73,12 @@ const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle })
         </span>
       </td>
 
-      {/* Action column */}
+      {/* Assignment column */}
       <td className="actions-column">
         {request.status.toLowerCase() === 'pending' ? (
           <button
             className="assign-button"
-            onClick={() => handleAssignVehicle(request.id, 'status', 'assigned')}
+            onClick={(event) => handleAssignVehicle(event, request.id, 'status', 'assigned')}
           >
             Assign
           </button>
@@ -71,19 +88,10 @@ const RequestRow = ({ request, selected, handleSelectRow, handleAssignVehicle })
       </td>
 
       {/* More options button */}
-      <td className="actions-column">
-        <button className="more-button" disabled={isDisabled}>
+      <td className="more-options">
+        <button className="more-button" onClick={(event) => handleMoreButton(event, request.id)}>
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            stroke="none"
-          >
-            <circle cx="12" cy="4" r="2" />
-            <circle cx="12" cy="12" r="2" />
-            <circle cx="12" cy="20" r="2" />
+            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 4 24" fill="currentColor" stroke="none"><circle cx="12" cy="4" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="12" cy="20" r="2" />
           </svg>
         </button>
       </td>

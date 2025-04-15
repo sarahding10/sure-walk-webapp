@@ -21,7 +21,11 @@
 
   .left-side {
     display: flex;
-    align-items: center;
+    gap: 1rem;
+  }
+
+  .filters-section {
+    display: flex;
     gap: 1rem;
   }
 
@@ -42,20 +46,33 @@
     transition: background-color 0.2s;
   }
 
-  /* .filter-button:hover,
-  .bulk-assign-button:hover {
-    background-color: #f9fafb;
-  } */
-
-  .bulk-assign-button.active {
-    background-color: #e5e7eb;
-  }
-
   .bulk-assign-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
     background-color: #A19F9C;
     color: white;
-    padding: 0.5rem 0.75rem;
     font-weight: bold;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* When active */
+  .bulk-assign-button.active {
+    background-color: #BF5700;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .bulk-assign-button.active:hover {
+    background-color: #9A4600;
+  }
+
+  .filter-button {
+    padding: 0.5rem 0.75rem;
   }
 
   .filter-button svg,
@@ -67,6 +84,7 @@
 /* RequestsTable.css */
   .requests-table-container {
     overflow-x: auto;
+    overflow-y: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,12 +120,12 @@
     background-color: #E1DEDC;
   }
 
-  /* .requests-table tr:hover {
-    background-color: #f9fafb;
-  } */
-
   .requests-table tr.selected {
     background-color: #F5E3C8;
+  }
+
+  .requests-table tr.disabled-row {
+    background-color: #C1C0BF;
   }
 
   .checkbox-column {
@@ -116,15 +134,21 @@
 
   .actions-column {
     width: 100px;
-    text-align: right;
+    text-align: center;
   }
 
   thead {
     pointer-events: none;
   }
 
+  td.name-section {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
   .checkbox {
-    transform: scale(2);  /* Optional: You can also use transform scale for resizing */
+    transform: scale(2);
     border-color: #2F2A25;
     border-width: 2px;
   }
@@ -133,14 +157,22 @@
     accent-color: #BF5700;
   }
 
-  .checkbox:disabled {
-    pointer-events: none;
-    opacity: 1;
-    background-color: #756D66;
+  input[type=checkbox]:disabled {
+    background-color: #A19F9C;
   }
 
-  .selected {
-    background-color: #F5E3C8; /* Highlight the selected row with a background color */
+  td .selected {
+    background-color: #F5E3C8;
+  }
+
+  .more-options {
+    margin-left: auto;
+    padding-right: 0;
+  }
+
+  td .timestamp {
+    color: #756D66;
+    font-size: 0.75rem;
   }
 
 
@@ -153,27 +185,27 @@
   }
 
   .status-pending {
-    background-color: #CDE9F9;
+    background-color: #FFCE73;
     color: #2F2A25;
   }
 
   .status-assigned {
-    background-color: #F99AD3;
+    background-color: #FFA46C;
     color: #2F2A25;
   }
 
   .status-picked-up {
-    background-color: #e0e7ff;
+    background-color: #8CBBEA;
     color: #2F2A25;
   }
 
   .status-complete {
-    background-color: #25B85B;
+    background-color: #45AA6A;
     color: #F8F5F4;
   }
 
   .status-cancelled {
-    background-color: #CE1313;
+    background-color: #CF2929;
     color: #F8F5F4;
   }
 
@@ -185,18 +217,17 @@
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
+    font-weight: bold;
     cursor: pointer;
     margin-right: 0.5rem;
   }
 
   .assign-button:hover {
-    background-color: #c05621;
+    background-color: #9A4600;
   }
 
   .more-button {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 0.25rem;
   }

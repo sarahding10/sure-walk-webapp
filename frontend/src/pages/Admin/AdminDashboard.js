@@ -4,7 +4,6 @@ import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestor
 import Header from './Header/Header';
 import RequestsSection from './Requests/RequestsSection';
 import StatRow from './Stats/StatRow';
-import './AdminDashboard.css'
 
 function AdminDashboard () {
   const [riderRequests, setRiderRequests] = useState([]);
@@ -65,10 +64,10 @@ function AdminDashboard () {
   const pendingRequests = riderRequests.filter((request) => request.status === "pending");
 
   // Filter same day user canceled requests
-  const userCanceled = riderRequests.filter((request) => request.status === "canceled" && request.canceledBy && request.canceledBy === 'rider');
+  const userCanceled = riderRequests.filter((request) => request.status === "cancelled" && request.canceledBy && request.canceledBy === 'rider');
 
   // Filter same day admin canceled requests
-  const adminCanceled = riderRequests.filter((request) => request.status === "canceled" && request.canceledBy && request.canceledBy === 'admin');
+  const adminCanceled = riderRequests.filter((request) => request.status === "cancelled" && request.canceledBy && request.canceledBy === 'admin');
 
   // Filter for active vehicles
   const activeVehicles = vehicles.filter((vehicle) => vehicle.driver !== "");

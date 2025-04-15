@@ -3,7 +3,7 @@ import RiderCard from './RiderCard';
 import VehicleCard from './VehicleCard';
 import './VehicleWindow.css';
 
-const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests }) => {
+const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests, setSelectedRequests, setSelectedRows }) => {
   const BACKEND_URL = "http://localhost:5001";
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [vehicles, setVehicles] = useState([]);
@@ -43,7 +43,7 @@ const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests }) => {
         body: JSON.stringify({
           requestIds: selectedRequests.map((r) => r.id),
           vehicleId: selectedVehicle.id,
-          vehicleName: selectedVehicle.displayName,
+          vehicleName: `${selectedVehicle.type} #${selectedVehicle.typeIndex}`,
         }),
       });
 
@@ -52,7 +52,9 @@ const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests }) => {
       }
 
       onClose();
-      setSelectedVehicle(null); // Reset selected vehicle after assignment
+      setSelectedVehicle(null); // Reset selected things after assignment
+      setSelectedRequests([]);
+      setSelectedRows([]);
     } catch (err) {
       console.error('Error assigning vehicle:', err);
     }
@@ -62,8 +64,6 @@ const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests }) => {
   const handleSelectVehicle = (vehicle) => {
     setSelectedVehicle(vehicle); // Allow manual selection
   };
-
-  console.log('selectedVehicle' + selectedVehicle);
 
   return (
     <div className="popup-overlay">
@@ -93,7 +93,7 @@ const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests }) => {
                   key={vehicle.id}
                   vehicle={vehicle}
                   selectedVehicle={selectedVehicle}
-                  setSelectedVehicle={handleSelectVehicle} // Manual vehicle selection
+                  setSelectedVehicle={handleSelectVehicle}
                 />
               ))
             ) : (

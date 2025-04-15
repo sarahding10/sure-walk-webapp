@@ -1,0 +1,48 @@
+/* Container for the popup */
+.cancel-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0); /* transparent or slightly dark */
+    z-index: 1000;
+  }
+
+.cancel-popup {
+    position: absolute;
+    background-color: #F8F5F4;
+    box-shadow: 0px 4px 10px #00000040;
+    cursor: pointer;
+}
+
+/* Styling for the popup */
+.cancel {
+    width: 200px;
+    padding: 10px 5px;
+}
+
+.cancel-section {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 5px;
+}
+
+.cancel-text {
+    color: #CE1313;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.more-section {
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+hr {
+    background-color: #756D66;
+    height: 1.5px;
+    border: none;
+}
