@@ -1,7 +1,6 @@
 // services/locationService.js
 require('dotenv').config();
 
-// Define the UTAustin service boundaries
 // Pickup boundary (smaller, campus-focused area)
 const PICKUP_BOUNDARY = [
   { lat: 30.2820, lng: -97.7420 }, // Southwest corner
@@ -24,42 +23,43 @@ const DROPOFF_BOUNDARY = [
  * @returns {Promise<{latitude: number, longitude: number, formattedAddress: string}>}
  */
 const geocodeLocation = async (locationString) => {
-  try {
-    const params = new URLSearchParams({
-      address: locationString,
-      key: process.env.GOOGLE_MAPS_API_KEY,
-      components: 'locality:austin|administrative_area:tx'
-    });
-
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`,
-      { method: 'GET' }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Geocoding request failed with status: ${response.status}`);
+    try {
+      const params = new URLSearchParams({
+        address: locationString,
+        key: process.env.GOOGLE_MAPS_API_KEY,
+        components: 'locality:austin|administrative_area:tx'
+      });
+  
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?${params.toString()}`,
+        { method: 'GET' }
+      );
+  
+      if (!response.ok) {
+        throw new Error(`Geocoding request failed with status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      if (data.status !== 'OK' || !data.results.length) {
+        throw new Error(`Unable to geocode the address: ${locationString}`);
+      }
+  
+      const result = data.results[0];
+      const location = result.geometry.location;
+      
+      return {
+        latitude: location.lat,
+        longitude: location.lng,
+        formattedAddress: result.formatted_address,
+        placeId: result.place_id,
+        types: result.types || [] // Extract the types array from the result
+      };
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      throw new Error(`Location validation failed: ${error.message}`);
     }
-
-    const data = await response.json();
-
-    if (data.status !== 'OK' || !data.results.length) {
-      throw new Error(`Unable to geocode the address: ${locationString}`);
-    }
-
-    const result = data.results[0];
-    const location = result.geometry.location;
-    
-    return {
-      latitude: location.lat,
-      longitude: location.lng,
-      formattedAddress: result.formatted_address,
-      placeId: result.place_id
-    };
-  } catch (error) {
-    console.error('Geocoding error:', error);
-    throw new Error(`Location validation failed: ${error.message}`);
-  }
-};
+  };
 
 /**
  * Checks if a point is inside a polygon using ray casting algorithm
@@ -122,20 +122,28 @@ const validatePickupLocation = async (locationString) => {
 
 /**
  * Validates and geocodes a dropoff location, checks if it's within service boundaries
+ * and ensures it's not a restaurant
  * @param {string} locationString - The address to validate
  * @returns {Promise<Object>} - The validated and geocoded location
  */
 const validateDropoffLocation = async (locationString) => {
-  // Geocode the location
-  const geocodedLocation = await geocodeLocation(locationString);
-  
-  // Check if the location is within the dropoff service boundary
-  if (!isDropoffWithinBoundary(geocodedLocation.latitude, geocodedLocation.longitude)) {
-    throw new Error(`Dropoff location is outside of service area: ${geocodedLocation.formattedAddress}`);
-  }
-  
-  return geocodedLocation;
-};
+    // Geocode the location
+    const geocodedLocation = await geocodeLocation(locationString);
+    
+    // Check if the geocoded location has types information
+    if (geocodedLocation.types && 
+        (geocodedLocation.types.includes('restaurant') || 
+         geocodedLocation.types.includes('food'))) {
+      throw new Error(`Restaurants are not allowed as dropoff locations: ${geocodedLocation.formattedAddress}`);
+    }
+    
+    // Check if the location is within the dropoff service boundary
+    if (!isDropoffWithinBoundary(geocodedLocation.latitude, geocodedLocation.longitude)) {
+      throw new Error(`Dropoff location is outside of service area: ${geocodedLocation.formattedAddress}`);
+    }
+    
+    return geocodedLocation;
+  };
 
 /**
  * Get boundary coordinates for frontend use

@@ -1,6 +1,7 @@
 // services/riderService.js
 const { db } = require('../config/db');
 const locationService = require('./locationService');
+const { Timestamp } = require('firebase-admin/firestore');
 
 exports.createRideRequest = async (userId, displayName, pickupLocation, dropoffLocation, passengerCount = 1) => {
   // Validate operating hours (7pm - 2am)
@@ -34,8 +35,8 @@ exports.createRideRequest = async (userId, displayName, pickupLocation, dropoffL
       },
       passengerCount: passengerCount || 1,
       status: 'pending',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
     };
 
     // Save to database
