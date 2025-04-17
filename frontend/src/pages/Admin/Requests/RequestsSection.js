@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RequestsHeader from './RequestsHeader';
 import RequestsTable from './RequestsTable';
 import VehicleAssignmentWindow from '../AssignmentWindow/VehicleAssignmentWindow';
+import RowFilterWindow from '../FilterWindow/RowFilterWindow';
 import './Requests.css';
 
 function RequestsSection({ requestsData }) {
+  const [filteredRequests, setFilteredRequests] = useState(requestsData);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedRequests, setSelectedRequests] = useState([]);  // To manage selected requests
+  const [isVehiclePopupOpen, setIsVehiclePopupOpen] = useState(false);
+  const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
+  const [selectedRequests, setSelectedRequests] = useState([]);
 
   // Function to handle selecting/deselecting rows
   const handleSelectRow = (id) => {
@@ -18,37 +21,65 @@ function RequestsSection({ requestsData }) {
     }
   };
 
-  // Function to handle assigning a vehicle to a request
-  const handleAssignVehicle = (requestId) => {
-    // Get selected request details
-    const selectedRequest = requestsData.find(r => r.id === requestId);
-
-    // If any rows are selected, use those; otherwise, use the clicked request
-    const selectedRequestsData = selectedRows.length > 0
-      ? requestsData.filter(r => selectedRows.includes(r.id))  // Filter based on selectedRows
-      : [selectedRequest];  // If no rows selected, use the clicked request
-
-    setSelectedRequests(selectedRequestsData);
-    setIsPopupOpen(true); // Open the popup when a request is selected
+  // Function to open filter row window
+  const handleFilterRowsClick = () => {
+    setIsFilterPopupOpen(true);
   };
+
+  // Function to handle assigning a vehicle to a request
+  const handleAssignVehicle = (event, requestId) => {
+    event.stopPropagation();
+    const selectedRequest = filteredRequests.find(r => r.id === requestId);  // Use filteredRequests for assignment
+    const selectedRequestsData = selectedRows.length > 0
+      ? filteredRequests.filter(r => selectedRows.includes(r.id))
+      : [selectedRequest];
+    setSelectedRequests(selectedRequestsData);
+    setIsVehiclePopupOpen(true); // Open the popup when a request is selected
+  };
+
+  // Function to handle the filter save logic
+  const handleFilterSave = (filteredData) => {
+    setFilteredRequests(filteredData); // Update the filtered requests
+    setIsFilterPopupOpen(false); // Close the filter window
+  };
+
+  // Function to revert to original data (requestsData)
+  const revertToOriginal = () => {
+    setFilteredRequests([...requestsData]);  // Reset to original data
+  };
+
+  useEffect(() => {
+    setFilteredRequests(requestsData);
+  }, [requestsData]);
 
   return (
     <div className="requests-section">
       <RequestsHeader
-        totalRequests={requestsData.length}
+        totalRequests={filteredRequests.length}  // Display filtered requests length
         onBulkAssign={handleAssignVehicle}
         selectedRequests={selectedRows}
+        handleFilterRowsClick={handleFilterRowsClick}
+        handleRevert={revertToOriginal}  // Function to revert to original data
       />
       <RequestsTable
-        requests={requestsData}
+        requests={filteredRequests}  // Use filteredRequests for display
         selectedRows={selectedRows}
         handleSelectRow={handleSelectRow}
         handleAssignVehicle={handleAssignVehicle}
       />
+      <RowFilterWindow
+        isOpen={isFilterPopupOpen}
+        onClose={() => setIsFilterPopupOpen(false)}
+        requestsData={requestsData}
+        filteredRequestsData={filteredRequests}
+        setFilteredRequestsData={setFilteredRequests}
+      />
       <VehicleAssignmentWindow
-        isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
+        isOpen={isVehiclePopupOpen}
+        onClose={() => setIsVehiclePopupOpen(false)}
         selectedRequests={selectedRequests}
+        setSelectedRequests={setSelectedRequests}
+        setSelectedRows={setSelectedRows}
       />
     </div>
   );

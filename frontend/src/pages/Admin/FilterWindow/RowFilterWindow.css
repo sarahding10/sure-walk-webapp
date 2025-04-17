@@ -1,0 +1,160 @@
+/* Container */
+.filter-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    background-color: white;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .header-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .close-btn {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #4b5563;
+  }
+
+  .link-buttons {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  /* Buttons (Select All & Reset) */
+  .btn-link {
+    color: #0288D1;
+    font-weight: 500;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+
+
+  /* Filter section */
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .filter-col {
+    margin-bottom: 8px;
+  }
+
+  .filter-label {
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .filter-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .filter-item input {
+    margin-right: 0.5rem;
+  }
+
+  .input-field {
+    border: 1px solid #756D66;
+    border-radius: 4px;
+    height: 1.5rem;
+    min-width: 15rem;
+  }
+
+  .input-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Input Styles */
+  .input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 4px 8px;
+  }
+
+  .input-group input {
+    width: 100%;
+    border: 2px solid #756D66;
+    outline: none;
+  }
+
+  .input-icon {
+    width: 1rem;
+    height: 1rem;
+    color: #6b7280;
+    margin-right: 0.25rem;
+  }
+
+  /* Save Button */
+  .save-btn {
+    background-color: #BF5700;
+    color: white;
+    margin-top: 16px;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    right: 100%;
+  }
+
+  .save-btn:hover {
+    background-color: #9a2d0d;
+  }
+
+  .filter-col input[type=checkbox] {
+    accent-color: #BF5700;
+    border-radius: 10px;
+    width: 25px;
+    height: 25px;
+  }
+
+  .save-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+
+  .checkbox {
+    transform: scale(2);
+    border: 2px solid #756D66;
+  }
+
+  .save-btn {
+    background-color: #BF5700;
+    color: white;
+    font-weight: bold;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .save-btn:hover {
+    background-color: #9a2d0d;
+  }
