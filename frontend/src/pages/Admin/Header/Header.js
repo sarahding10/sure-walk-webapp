@@ -4,7 +4,7 @@ import sureWalkTitle from '../../../assets/images/sure-walk-title.png';
 
 function Header() {
     return (
-        <header>
+        <header className="admin-header">
             <img src={sureWalkTitle} alt="Sure Walk" />
         </header>
     )

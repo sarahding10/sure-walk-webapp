@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import './CancelPopupWindow.css';
 
 function CancelPopupWindow({ request, isOpen, onClose, position }) {
-    const BACKEND_URL = 'http://localhost:5001';
+    const BACKEND_URL = process.env.REACT_APP_API_BASE_URL;
     const popupRef = useRef(null);
 
     // Close popup when clicking outside

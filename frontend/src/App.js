@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import DriverDashboard from './pages/Driver/DriverDashboard';
+import VehicleSelection from './pages/Driver/VehicleSelection';
 
 // Import other pages
 import LoginRouter from './pages/Rider/LoginFlow/LoginRouter';
@@ -24,7 +25,8 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
 
             {/* Driver routes */}
-            <Route path="/driver" element={<DriverDashboard />} />
+            <Route path="/driver" element={<VehicleSelection />} />
+            <Route path="/driver/dashboard" element={<DriverDashboard />} />
 
             {/* Default redirect */}
             <Route path="*" element={<Navigate to="/login" replace/>} />
