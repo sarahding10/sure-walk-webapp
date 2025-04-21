@@ -5,6 +5,8 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../../firebase/config'; // Make sure this path matches your Firebase config
 import './RideTrackingStyles.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function RideTracking() {
   const { rideId } = useParams();
   const { currentUser } = useAuth();
@@ -25,7 +27,7 @@ function RideTracking() {
     // Initial fetch to get complete ride data
     async function fetchInitialRideData() {
       try {
-        const response = await fetch(`http://localhost:5000/api/rider/ride/${rideId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/rider/status`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${await currentUser.getIdToken()}`
@@ -94,7 +96,7 @@ function RideTracking() {
 
   const handleCancelRide = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/rider/ride/${rideId}/cancel`, {
+      const response = await fetch(`${API_BASE_URL}/api/rider/ride/${rideId}/cancel`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
