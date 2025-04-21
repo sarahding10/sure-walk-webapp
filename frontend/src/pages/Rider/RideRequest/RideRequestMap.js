@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import './RideRequestStyles.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'
+const API_BASE_URL ='http://localhost:5000'
 
 function RideRequestMap() {
   const { currentUser, getUserProfile, loading: authLoading } = useAuth();
@@ -234,7 +234,7 @@ function RideRequestMap() {
       const data = await response.json();
 
       // Navigate to tracking page with the ride ID
-      navigate('/login');
+      navigate('/login')
     } catch (error) {
       // show the reason and reset to the first step
     setError(error.message);
