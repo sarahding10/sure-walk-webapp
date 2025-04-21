@@ -8,7 +8,6 @@ import VehicleSelection from './pages/Driver/VehicleSelection';
 // Import other pages
 import LoginRouter from './pages/Rider/LoginFlow/LoginRouter';
 import RiderRequest from './pages/Rider/RideRequest/RideRequestMap';
-import RideTracking from './pages/Rider/RideTracking/RideTracking';
 
 function App() {
   return (
@@ -21,8 +20,6 @@ function App() {
 
             {/* Rider routes */}
             <Route path="/rider/request" element={<RiderRequest />} />
-
-            <Route path="/rider/tracking/:rideId" element={<RideTracking />} />
 
             {/* Admin routes */}
             <Route path="/admin" element={<AdminDashboard />} />
