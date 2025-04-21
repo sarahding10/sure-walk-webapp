@@ -3,7 +3,8 @@ import {
   getAuth, 
   RecaptchaVerifier, 
   signInWithPhoneNumber, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  updateProfile
 } from 'firebase/auth';
 import { 
   getFirestore, 
@@ -105,60 +106,59 @@ export function AuthProvider({ children }) {
   // Create or update user profile in Firestore
   async function updateUserProfile(userData) {
     if (!currentUser) throw new Error('No authenticated user');
-    
-    // const userRef = doc(db, 'users', currentUser.uid);
-    // const userSnap = await getDoc(userRef);
-    
-    // if (userSnap.exists()) {
-    //   // Update existing user
-    //   await updateDoc(userRef, {
-    //     ...userData,
-    //     updatedAt: serverTimestamp()
-    //   });
-    // } else {
-    //   // Create new user
-    //   await setDoc(userRef, {
-    //     phoneNumber: currentUser.phoneNumber,
-    //     ...userData,
-    //     createdAt: serverTimestamp(),
-    //     updatedAt: serverTimestamp()
-    //   });
-    // }
-    
-    // return userRef;
-
-    const response = await fetchWithAuth('/auth/profile', {
-      method: 'POST',
-      body: JSON.stringify(userData)
+  
+    const userRef = doc(db, 'users', currentUser.uid);
+    const userSnap = await getDoc(userRef);
+  
+    if (userSnap.exists()) {
+      await updateDoc(userRef, {
+        ...userData,
+        updatedAt: serverTimestamp()
+      });
+    } else {
+      await setDoc(userRef, {
+        phoneNumber: currentUser.phoneNumber,
+        ...userData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+  
+    // ✅ Also update Firebase Auth profile
+    await updateProfile(currentUser, {
+      displayName: `${userData.firstName} ${userData.lastName}`
     });
-    
-    // Refresh the user profile after update
+  
+    // Optionally re-fetch Firestore profile into context state
     const updatedProfile = await getUserProfile();
     setUserProfile(updatedProfile);
-    
+  
     return updatedProfile;
   }
+  
 
   // Get user profile from Firestore
   async function getUserProfile() {
     if (!currentUser) return null;
     
-    // const userRef = doc(db, 'users', currentUser.uid);
-    // const userSnap = await getDoc(userRef);
-    
-    // if (userSnap.exists()) {
-    //   return userSnap.data();
-    // }
-    
-    // return null;
+    const userRef = doc(db, 'users', currentUser.uid);
+    const userSnap = await getDoc(userRef);
 
-    try {
-      const response = await fetchWithAuth('/auth/profile');
-      return response.userProfile;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      return null;
+    console.log('User snapshot:', userSnap.data());
+    
+    if (userSnap.exists()) {
+      return userSnap.data();
     }
+    
+    return null;
+
+    // try {
+    //   const response = await fetchWithAuth('/auth/profile');
+    //   return response.userProfile;
+    // } catch (error) {
+    //   console.error('Error fetching user profile:', error);
+    //   return null;
+    // }
   }
 
   async function getPreviousRides() {

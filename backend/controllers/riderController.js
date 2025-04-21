@@ -25,7 +25,7 @@ exports.getPreviousRides = async (req, res) => {
 exports.createRideRequest = async (req, res) => {
   try {
     const userId = req.user.uid;
-    const { pickupLocation, dropoffLocation, passengerCount } = req.body;
+    const { pickupLocation, dropoffLocation, passengerCount, displayName } = req.body;
 
     const rideRequest = await riderService.createRideRequest(
       userId,
@@ -39,49 +39,47 @@ exports.createRideRequest = async (req, res) => {
       message: 'Ride request created successfully',
       rideId: rideRequest.rideId
     });
-  } catch (error) {
-    console.error('Error creating ride request:', error);
-
-    // Handle specific errors with appropriate status codes
-    if (error.message.includes('Invalid location')) {
-      return res.status(400).json({ message: error.message });
-    } else if (error.message.includes('operating hours')) {
-      return res.status(400).json({ message: error.message });
+  } catch (err) {
+    console.error(err);
+    // validation errors → 400
+    if (err.message.startsWith('Pickup') ||
+        err.message.startsWith('Dropoff') ||
+        err.message.startsWith('Invalid location')) {
+      return res.status(400).json({ message: err.message });
     }
-
-    // Generic server error
-    res.status(500).json({
-      message: 'Failed to create ride request',
-      error: error.message
-    });
+    // fallback → 500
+    return res.status(500).json({ message: 'Server error', detail: err.message });
   }
 };
 
 exports.getRiderStatus = async (req, res) => {
   try {
     const userId = req.user.uid;
-
+    
     // Get the most recent active ride request for this user
-    const ridesSnapshot = await db.collection('rides')
+    const ridesSnapshot = await db.collection('requests')
       .where('riderId', '==', userId)
-      .where('status', 'in', ['pending', 'approved', 'assigned', 'inProgress', 'arrived'])
+      .where('status', 'in', ['pending', 'assigned', 'arrived', 'completed', 'cancelled'])
       .orderBy('createdAt', 'desc')
       .limit(1)
       .get();
-
+    
     if (ridesSnapshot.empty) {
       return res.status(200).json({ hasActiveRide: false });
     }
-
+    
     const rideDoc = ridesSnapshot.docs[0];
     const ride = {
       id: rideDoc.id,
       ...rideDoc.data()
     };
-
-    // If ride is assigned, get driver info
+    
+    // If ride has a driver assigned, get driver info
     let driverInfo = null;
-    if (ride.driverId && (ride.status === 'assigned' || ride.status === 'inProgress' || ride.status === 'arrived')) {
+    let vehicleInfo = null;
+    
+    if (ride.driverId && (ride.status === 'driver_assigned' || ride.status === 'arrived')) {
+      // Get driver information
       const driverSnapshot = await db.collection('users').doc(ride.driverId).get();
       if (driverSnapshot.exists) {
         const driver = driverSnapshot.data();
@@ -91,12 +89,33 @@ exports.getRiderStatus = async (req, res) => {
           phoneNumber: driver.phoneNumber
         };
       }
+      
+      // If driver has a vehicle assigned, get vehicle info
+      if (ride.vehicleId) {
+        const vehicleSnapshot = await db.collection('vehicles').doc(ride.vehicleId).get();
+        if (vehicleSnapshot.exists) {
+          const vehicle = vehicleSnapshot.data();
+          vehicleInfo = {
+            description: `${vehicle.color} ${vehicle.make} ${vehicle.model}`
+          };
+        }
+      } else {
+        // Default vehicle description if no vehicle ID is available
+        vehicleInfo = {
+          description: 'White van with a UT Austin logo on the side'
+        };
+      }
     }
-
+    
+    // Format the response to match frontend expectations
     res.status(200).json({
       hasActiveRide: true,
-      ride,
-      driverInfo
+      ride: {
+        ...ride,
+        queuePosition: ride.queuePosition || 0
+      },
+      driver: driverInfo,
+      vehicle: vehicleInfo
     });
   } catch (error) {
     console.error('Error getting rider status:', error);
