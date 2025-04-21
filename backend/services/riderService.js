@@ -5,34 +5,26 @@ const { Timestamp } = require('firebase-admin/firestore');
 
 exports.createRideRequest = async (userId, displayName, pickupLocation, dropoffLocation, passengerCount = 1) => {
   // Validate operating hours (7pm - 2am)
-  const currentHour = new Date().getHours();
-  if (currentHour < 19 && currentHour > 2) {
-    throw new Error('Ride requests are only valid during operating hours (7pm - 2am)');
-  }
+  // const currentHour = new Date().getHours();
+  // if (currentHour < 19 && currentHour > 2) {
+  //   throw new Error('Ride requests are only valid during operating hours (7pm - 2am)');
+  // }
 
   try {
     // Validate and geocode pickup location with pickup-specific validation
     const validatedPickup = await locationService.validatePickupLocation(pickupLocation);
     
-    // Validate and geocode dropoff location with dropoff-specific validation
+    // // Validate and geocode dropoff location with dropoff-specific validation
     const validatedDropoff = await locationService.validateDropoffLocation(dropoffLocation);
+
+    console.log("hello from createRideRequest");
 
     // Create new ride request with validated locations
     const rideRequest = {
       riderId: userId,
       displayName: displayName,
-      pickupLocation: {
-        address: validatedPickup.formattedAddress,
-        latitude: validatedPickup.latitude,
-        longitude: validatedPickup.longitude,
-        placeId: validatedPickup.placeId
-      },
-      dropoffLocation: {
-        address: validatedDropoff.formattedAddress,
-        latitude: validatedDropoff.latitude,
-        longitude: validatedDropoff.longitude,
-        placeId: validatedDropoff.placeId
-      },
+      pickupLocation,
+      dropoffLocation,
       passengerCount: passengerCount || 1,
       status: 'pending',
       createdAt: Timestamp.now(),

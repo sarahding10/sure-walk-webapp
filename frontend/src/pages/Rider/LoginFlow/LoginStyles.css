@@ -51,7 +51,7 @@
   .logo-container h1 {
     font-size: 36px;
     font-weight: bold;
-    color: #C35900;
+    color: #bf5700;
     margin-bottom: 10px;
   }
   
@@ -84,6 +84,8 @@
     flex-direction: column;
     padding: 20px 0;
     height: 100%;
+    min-height: calc(100vh - 40px); /* Adjust based on any padding/margin */
+    position: relative; /* Add this to allow absolute positioning within */
   }
   
   .page-header {
@@ -94,7 +96,7 @@
   .logo-text {
     font-size: 24px;
     font-weight: bold;
-    color: #C35900;
+    color: #bf5700;
     margin-bottom: 15px;
   }
   
@@ -199,7 +201,7 @@
     display: block;
     width: 100%;
     padding: 14px;
-    background-color: #C35900;
+    background-color: #bf5700;
     color: white;
     border: none;
     border-radius: 6px;
@@ -243,7 +245,7 @@
   .btn-link {
     background: none;
     border: none;
-    color: #C35900;
+    color: #bf5700;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -261,7 +263,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 30px;
+    margin-top: auto; /* Push to the bottom of flex container */
+    position: sticky; /* Keeps it at the bottom even if content scrolls */
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding-top: 20px;
+    background-color: white; /* Match your page background */
   }
   
   .btn-back {
@@ -283,7 +291,7 @@
   
   .btn-next {
     padding: 12px 30px;
-    background-color: #C35900;
+    background-color: #bf5700;
     color: white;
     border: none;
     border-radius: 6px;

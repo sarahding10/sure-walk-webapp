@@ -3,18 +3,18 @@ require('dotenv').config();
 
 // Pickup boundary (smaller, campus-focused area)
 const PICKUP_BOUNDARY = [
-  { lat: 30.2820, lng: -97.7420 }, // Southwest corner
-  { lat: 30.2820, lng: -97.7290 }, // Southeast corner
-  { lat: 30.2950, lng: -97.7290 }, // Northeast corner
-  { lat: 30.2950, lng: -97.7420 }  // Northwest corner
+  { lat: 30.31875, lng: -97.73085 }, // Southwest corner
+  { lat: 30.30969, lng: -97.71073 }, // Southeast corner
+  { lat: 30.2853, lng: -97.75324 }, // Northeast corner
+  { lat: 30.27881, lng: -97.73066 }  // Northwest corner
 ];
 
 // Dropoff boundary (wider area around campus)
 const DROPOFF_BOUNDARY = [
-  { lat: 30.2750, lng: -97.7500 }, // Southwest corner
-  { lat: 30.2750, lng: -97.7200 }, // Southeast corner
-  { lat: 30.3050, lng: -97.7200 }, // Northeast corner
-  { lat: 30.3050, lng: -97.7500 }  // Northwest corner
+  { lat: 30.31875, lng: -97.73085 }, // Southwest corner
+  { lat: 30.30969, lng: -97.71073 }, // Southeast corner
+  { lat: 30.2853, lng: -97.75324 }, // Northeast corner
+  { lat: 30.27881, lng: -97.73066 }  // Northwest corner
 ];
 
 /**
@@ -111,6 +111,8 @@ const isDropoffWithinBoundary = (latitude, longitude) => {
 const validatePickupLocation = async (locationString) => {
   // Geocode the location
   const geocodedLocation = await geocodeLocation(locationString);
+
+  console.log("pickup geocodedLocation", geocodedLocation);
   
   // Check if the location is within the pickup service boundary
   if (!isPickupWithinBoundary(geocodedLocation.latitude, geocodedLocation.longitude)) {
@@ -129,6 +131,8 @@ const validatePickupLocation = async (locationString) => {
 const validateDropoffLocation = async (locationString) => {
     // Geocode the location
     const geocodedLocation = await geocodeLocation(locationString);
+
+    console.log("dropoff geocodedLocation", geocodedLocation);
     
     // Check if the geocoded location has types information
     if (geocodedLocation.types && 

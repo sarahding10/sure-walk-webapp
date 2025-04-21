@@ -4,9 +4,9 @@ import { useAuth } from '../../../contexts/AuthContext';
 import './RideRequestStyles.css';
 
 function RideRequestMap() {
-  const { currentUser, getUserProfile } = useAuth();
+  const { currentUser, getUserProfile, loading: authLoading } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [profileLoading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [step, setStep] = useState('pickup'); // 'pickup', 'dropoff', 'confirm'
   const [pickup, setPickup] = useState('');
@@ -46,31 +46,31 @@ function RideRequestMap() {
       }
     }
 
-    if (currentUser) {
+    if (!authLoading && currentUser) {
       loadUserProfile();
     }
-  }, [currentUser, getUserProfile]);
+  }, [authLoading, currentUser, getUserProfile]);
 
   // Load Google Maps API
-  useEffect(() => {
-    // Check if Google Maps script is already loaded
-    if (!window.google || !window.google.maps) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = initializePlacesAPI;
-      document.head.appendChild(script);
+  // useEffect(() => {
+  //   // Check if Google Maps script is already loaded
+  //   if (!window.google || !window.google.maps) {
+  //     const script = document.createElement('script');
+  //     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
+  //     script.async = true;
+  //     script.defer = true;
+  //     script.onload = initializePlacesAPI;
+  //     document.head.appendChild(script);
 
-      return () => {
-        if (document.head.contains(script)) {
-          document.head.removeChild(script);
-        }
-      };
-    } else {
-      initializePlacesAPI();
-    }
-  }, []);
+  //     return () => {
+  //       if (document.head.contains(script)) {
+  //         document.head.removeChild(script);
+  //       }
+  //     };
+  //   } else {
+  //     initializePlacesAPI();
+  //   }
+  // }, []);
 
   // Filter suggestions based on input (fallback)
   useEffect(() => {
@@ -87,65 +87,65 @@ function RideRequestMap() {
     }
   }, [pickup, dropoff, step, suggestions]);
 
-  function initializePlacesAPI() {
-    if (window.google && window.google.maps) {
-      // Initialize autocomplete for pickup
-      const pickupAutocomplete = new window.google.maps.places.Autocomplete(
-        document.getElementById('pickup-input'),
-        {
-          componentRestrictions: { country: 'us' },
-          fields: ['place_id', 'formatted_address', 'geometry', 'name']
-        }
-      );
+  // function initializePlacesAPI() {
+  //   if (window.google && window.google.maps) {
+  //     // Initialize autocomplete for pickup
+  //     const pickupAutocomplete = new window.google.maps.places.Autocomplete(
+  //       document.getElementById('pickup-input'),
+  //       {
+  //         componentRestrictions: { country: 'us' },
+  //         fields: ['place_id', 'formatted_address', 'geometry', 'name']
+  //       }
+  //     );
 
-      // Initialize autocomplete for dropoff
-      const dropoffAutocomplete = new window.google.maps.places.Autocomplete(
-        document.getElementById('dropoff-input'),
-        {
-          componentRestrictions: { country: 'us' },
-          fields: ['place_id', 'formatted_address', 'geometry', 'name']
-        }
-      );
+  //     // Initialize autocomplete for dropoff
+  //     const dropoffAutocomplete = new window.google.maps.places.Autocomplete(
+  //       document.getElementById('dropoff-input'),
+  //       {
+  //         componentRestrictions: { country: 'us' },
+  //         fields: ['place_id', 'formatted_address', 'geometry', 'name']
+  //       }
+  //     );
 
-      // Add listener for pickup autocomplete
-      pickupAutocomplete.addListener('place_changed', () => {
-        const place = pickupAutocomplete.getPlace();
-        if (place.geometry) {
-          setPickup(place.formatted_address || place.name);
-          setShowSuggestions(false);
+  //     // Add listener for pickup autocomplete
+  //     pickupAutocomplete.addListener('place_changed', () => {
+  //       const place = pickupAutocomplete.getPlace();
+  //       if (place.geometry) {
+  //         setPickup(place.formatted_address || place.name);
+  //         setShowSuggestions(false);
 
-          // Create a marker for the pickup location if we wanted to show it on a map
-          // Since we're keeping the iframe map, we store the reference but don't display it
-          pickupMarkerRef.current = {
-            position: {
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng()
-            },
-            title: place.name
-          };
-        }
-      });
+  //         // Create a marker for the pickup location if we wanted to show it on a map
+  //         // Since we're keeping the iframe map, we store the reference but don't display it
+  //         pickupMarkerRef.current = {
+  //           position: {
+  //             lat: place.geometry.location.lat(),
+  //             lng: place.geometry.location.lng()
+  //           },
+  //           title: place.name
+  //         };
+  //       }
+  //     });
 
-      // Add listener for dropoff autocomplete
-      dropoffAutocomplete.addListener('place_changed', () => {
-        const place = dropoffAutocomplete.getPlace();
-        if (place.geometry) {
-          setDropoff(place.formatted_address || place.name);
-          setShowSuggestions(false);
+  //     // Add listener for dropoff autocomplete
+  //     dropoffAutocomplete.addListener('place_changed', () => {
+  //       const place = dropoffAutocomplete.getPlace();
+  //       if (place.geometry) {
+  //         setDropoff(place.formatted_address || place.name);
+  //         setShowSuggestions(false);
 
-          // Create a marker for the dropoff location if we wanted to show it on a map
-          // Since we're keeping the iframe map, we store the reference but don't display it
-          dropoffMarkerRef.current = {
-            position: {
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng()
-            },
-            title: place.name
-          };
-        }
-      });
-    }
-  }
+  //         // Create a marker for the dropoff location if we wanted to show it on a map
+  //         // Since we're keeping the iframe map, we store the reference but don't display it
+  //         dropoffMarkerRef.current = {
+  //           position: {
+  //             lat: place.geometry.location.lat(),
+  //             lng: place.geometry.location.lng()
+  //           },
+  //           title: place.name
+  //         };
+  //       }
+  //     });
+  //   }
+  // }
 
   const handlePickupChange = (e) => {
     setPickup(e.target.value);
@@ -197,15 +197,17 @@ function RideRequestMap() {
     setLoading(true);
     setError(null);
 
+    console.log("current user", currentUser);
+
     try {
       // Create ride request payload
       const rideRequest = {
         userId: currentUser.uid,
-        displayName: currentUser.displayName,
+        displayName: userProfile?.displayName || currentUser?.displayName || 'Anonymous',
         pickupLocation: pickup,
         dropoffLocation: dropoff,
         passengerCount: passengerCount,
-        requestTime: new Date().toISOString(),
+        requestTime: new Date(),
         status: 'pending'
       };
 
@@ -232,13 +234,15 @@ function RideRequestMap() {
       // Navigate to tracking page with the ride ID
       navigate(`/rider/tracking/${data.rideId}`);
     } catch (error) {
-      console.error('Error creating ride request:', error);
-      setError('Failed to create ride request. Please try again.');
-      setLoading(false);
+      // show the reason and reset to the first step
+    setError(error.message);
+    setStep('pickup');
+  } finally {
+    setLoading(false);
     }
   };
 
-  if (loading) {
+  if (authLoading || profileLoading) {
     return <div className="loading">Loading...</div>;
   }
 

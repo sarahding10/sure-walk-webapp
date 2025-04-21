@@ -19,6 +19,8 @@ function ProfilePage() {
       setError('Please fill out all fields');
       return;
     }
+
+    console.log('Submitting profile,', { firstName, lastName, utId });
     
     setLoading(true);
     try {
@@ -30,6 +32,7 @@ function ProfilePage() {
         displayName: `${firstName} ${lastName}`,
         role: 'rider'
       });
+
       
       // Navigate to rider dashboard
       navigate('/rider/request');
