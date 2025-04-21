@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Import routes
+const placesRoutes = require('./routes/places');
 const riderRoutes = require('../routes/riderRoutes');
 const driverRoutes = require('../routes/driverRoutes');
 const adminRoutes = require('../routes/adminRoutes');
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(cors());
 
 // API routes
+app.use('/api/places', placesRoutes);
 app.use('/api/rider', riderRoutes);
 app.use('/api/driver', driverRoutes);
 app.use('/api/admin', adminRoutes);

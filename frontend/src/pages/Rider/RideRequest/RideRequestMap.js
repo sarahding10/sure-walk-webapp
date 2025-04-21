@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import './RideRequestStyles.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'
+
 function RideRequestMap() {
   const { currentUser, getUserProfile, loading: authLoading } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
@@ -212,7 +214,7 @@ function RideRequestMap() {
       };
 
       // Send request to backend
-      const response = await fetch('http://localhost:5000/api/rider/request-ride', {
+      const response = await fetch(`${API_BASE_URL}/api/rider/request-ride`, {
         
         method: 'POST',
         headers: {
