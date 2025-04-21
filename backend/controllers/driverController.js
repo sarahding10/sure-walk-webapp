@@ -71,6 +71,9 @@ exports.statusUpdate = async (req, res) => {
         const { requestId, newStatus } = req.body;
 
         if (!requestId || !newStatus) {
+            console.log('missing');
+            console.log(requestId);
+            console.log(newStatus);
             return res.status(400).json({ message: 'Missing requestId or newStatus' });
         }
 
@@ -78,6 +81,7 @@ exports.statusUpdate = async (req, res) => {
         const doc = await requestRef.get();
 
         if (!doc.exists) {
+            console.log('missing request');
             return res.status(404).json({ message: 'Request not found' });
         }
 

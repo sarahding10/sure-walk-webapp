@@ -4,7 +4,7 @@ import VehicleCard from './VehicleCard';
 import './VehicleWindow.css';
 
 const VehicleAssignmentWindow = ({ isOpen, onClose, selectedRequests, setSelectedRequests, setSelectedRows }) => {
-  const BACKEND_URL = "http://localhost:5001";
+  const BACKEND_URL = process.env.REACT_APP_API_BASE_URL;
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [vehicles, setVehicles] = useState([]);
 

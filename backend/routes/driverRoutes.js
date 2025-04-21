@@ -13,6 +13,7 @@ const driverController = require('../controllers/driverController');
 
 // // Update driver status (active, inactive)
 // router.put('/status', verifyToken, verifyDriver, driverController.updateDriverStatus);
+router.post('/update', driverController.statusUpdate);
 
 // // Update ride status (arrived, completed)
 // router.put('/ride/:rideId/status', verifyToken, verifyDriver, driverController.updateRideStatus);

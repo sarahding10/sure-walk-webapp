@@ -4,7 +4,7 @@ import './RowFilterWindow.css';
 const statuses = ['pending', 'assigned', 'picked up', 'completed', 'cancelled'];
 
 function RowFilterWindow({ isOpen, onClose, requestsData, filteredRequestsData, setFilteredRequestsData }) {
-    const BACKEND_URL = "http://localhost:5001";
+    const BACKEND_URL = process.env.REACT_APP_API_BASE_URL;
     const [vehicles, setVehicles] = useState([]);
     const [selectedStatuses, setSelectedStatuses] = useState([...statuses]);
     const [selectedVehicles, setSelectedVehicles] = useState([...vehicles]);

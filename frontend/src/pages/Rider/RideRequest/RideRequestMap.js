@@ -20,7 +20,7 @@ function RideRequestMap() {
   const pickupMarkerRef = useRef(null);
   const dropoffMarkerRef = useRef(null);
   const navigate = useNavigate();
-  
+
   // Fallback suggestions list if Places API fails
   const [suggestions, setSuggestions] = useState([
     'Jester West Dormitory',
@@ -61,7 +61,7 @@ function RideRequestMap() {
       script.defer = true;
       script.onload = initializePlacesAPI;
       document.head.appendChild(script);
-      
+
       return () => {
         if (document.head.contains(script)) {
           document.head.removeChild(script);
@@ -97,7 +97,7 @@ function RideRequestMap() {
           fields: ['place_id', 'formatted_address', 'geometry', 'name']
         }
       );
-      
+
       // Initialize autocomplete for dropoff
       const dropoffAutocomplete = new window.google.maps.places.Autocomplete(
         document.getElementById('dropoff-input'),
@@ -106,14 +106,14 @@ function RideRequestMap() {
           fields: ['place_id', 'formatted_address', 'geometry', 'name']
         }
       );
-      
+
       // Add listener for pickup autocomplete
       pickupAutocomplete.addListener('place_changed', () => {
         const place = pickupAutocomplete.getPlace();
         if (place.geometry) {
           setPickup(place.formatted_address || place.name);
           setShowSuggestions(false);
-          
+
           // Create a marker for the pickup location if we wanted to show it on a map
           // Since we're keeping the iframe map, we store the reference but don't display it
           pickupMarkerRef.current = {
@@ -125,14 +125,14 @@ function RideRequestMap() {
           };
         }
       });
-      
+
       // Add listener for dropoff autocomplete
       dropoffAutocomplete.addListener('place_changed', () => {
         const place = dropoffAutocomplete.getPlace();
         if (place.geometry) {
           setDropoff(place.formatted_address || place.name);
           setShowSuggestions(false);
-          
+
           // Create a marker for the dropoff location if we wanted to show it on a map
           // Since we're keeping the iframe map, we store the reference but don't display it
           dropoffMarkerRef.current = {
@@ -211,6 +211,7 @@ function RideRequestMap() {
 
       // Send request to backend
       const response = await fetch('http://localhost:5000/api/rider/request-ride', {
+        
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -383,18 +384,18 @@ function RideRequestMap() {
                   <p className="detail-value">{dropoff}</p>
                 </div>
               </div>
-              
+
               <div className="passengers-selector">
                 <p>Number of Passengers:</p>
                 <div className="passenger-controls">
-                  <button 
-                    className="passenger-btn" 
+                  <button
+                    className="passenger-btn"
                     onClick={() => setPassengerCount(Math.max(1, passengerCount - 1))}
                     disabled={passengerCount <= 1}
                   >-</button>
                   <span className="passenger-count">{passengerCount}</span>
-                  <button 
-                    className="passenger-btn" 
+                  <button
+                    className="passenger-btn"
                     onClick={() => setPassengerCount(Math.min(4, passengerCount + 1))}
                     disabled={passengerCount >= 4}
                   >+</button>

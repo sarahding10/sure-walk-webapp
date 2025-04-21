@@ -1,48 +1,79 @@
-.card {
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
+.request-card {
+  border-radius: 1rem;
+  padding: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
 
-  .card.active {
-    background-color: #dbeeff; /* light blue */
-  }
+/* Remove this line */
+.request-body {
+  font-size: 0.925rem;
+  line-height: 1.5;
+  margin-left: 33px; /* Or match the icon + name offset */
+}
 
-  .card.inactive {
-    background-color: #fef1d6; /* light beige */
-  }
+.request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+/* Alternating soft pastel backgrounds */
+.request-card:nth-child(even) {
+  background-color: #CDE9F9; /* soft beige */
+}
 
-  .icon-name {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+.request-card:nth-child(odd) {
+  background-color: #F5E3C8; /* soft blue */
+}
 
-  .user-icon {
-    font-size: 20px;
-  }
+.request-card.active {
+  background-color: #e0f7ff;
+}
 
-  .name {
-    font-weight: 600;
-    font-size: 16px;
-  }
+.request-card.inactive {
+  background-color: #fef6e4;
+}
 
-  .toggle-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  }
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .card-details {
-    margin-top: 8px;
-    color: #444;
-    font-size: 14px;
-  }
+.request-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 5px;
+}
+
+.profile-icon {
+  color: #374151; /* Gray-700 */
+}
+
+.request-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937; /* Gray-800 */
+}
+
+.dropdown-arrow {
+  fill: #6b7280; /* Gray-500 */
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.dropdown-arrow:hover {
+  transform: scale(1.2);
+}
+
+.label {
+  font-weight: 500;
+  color: #374151; /* Gray-700 */
+}
+
+.location {
+  color: #6b7280; /* Gray-500 */
+}

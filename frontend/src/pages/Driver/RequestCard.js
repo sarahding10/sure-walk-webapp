@@ -1,27 +1,56 @@
-import React, { useState } from 'react';
 import './RequestCard.css';
+import { useState } from 'react';
+import ChangeStatusWindow from './ChangeStatusWindow';
 
-const RequestCard = ({ name, pickup, dropoff, status }) => {
-  const [expanded, setExpanded] = useState(false);
-  const cardClass = status === 'active' ? 'card active' : 'card inactive';
+function RequestCard({ requestId, request }) {
+  const [showPopup, setShowPopup] = useState(false);
+
+  const togglePopup = () => setShowPopup(prev => !prev);
+  const closePopup = () => setShowPopup(false);
 
   return (
-    <div className={cardClass}>
-      <div className="card-header">
-        <div className="icon-name">
-          <span className="user-icon">👤</span>
-          <span className="name">{name}</span>
+    <>
+      <div className="request-card">
+        <div className="request-header">
+          <div className="request-profile">
+            <svg
+              xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="profile-icon"
+            >
+              <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5 -5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" />
+            </svg>
+            <strong className="request-name">{request.displayName}</strong>
+          </div>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="currentColor" className="dropdown-arrow"
+            onClick={togglePopup}
+            style={{ cursor: "pointer" }}
+          >
+            <path d="M7 10l5 5 5-5H7z" />
+          </svg>
         </div>
-        <button className="toggle-btn" onClick={() => setExpanded(!expanded)}>
-          {expanded ? '▲' : '▼'}
-        </button>
+
+        <div className="request-body">
+          <p>
+            <span className="label">Pick up:</span>{" "}
+            <span className="location">{request.pickupLocation}</span>
+          </p>
+          <p>
+            <span className="label">Drop off:</span>{" "}
+            <span className="location">{request.dropoffLocation}</span>
+          </p>
+        </div>
       </div>
-      <div className="card-details">
-        <p><strong>Pick up:</strong> {pickup}</p>
-        <p><strong>Drop off:</strong> {dropoff}</p>
-      </div>
-    </div>
+
+      {showPopup && (
+        <div className="overlay" onClick={closePopup}>
+          <div className="popup-container" onClick={e => e.stopPropagation()}>
+            <ChangeStatusWindow onClose={closePopup} requestId={requestId} requestStatus={request.status}/>
+          </div>
+        </div>
+      )}
+    </>
   );
-};
+}
 
 export default RequestCard;
