@@ -234,11 +234,14 @@ function RideRequestMap() {
       const data = await response.json();
 
       // Navigate to tracking page with the ride ID
-      navigate(`/rider/tracking/${data.rideId}`);
+      navigate('/login');
     } catch (error) {
       // show the reason and reset to the first step
     setError(error.message);
-    setStep('pickup');
+    setTimeout(() => {
+      setStep('pickup');
+      setError(null);
+    }, 3000);
   } finally {
     setLoading(false);
     }
