@@ -28,5 +28,18 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: 'Server error', error: err.message });
 });
 
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).send();  // No content, no favicon served
+});
+
+app.get('/favicon.png', (req, res) => {
+  res.status(204).send();  // No content
+});
+
+// Handle root path ("/")
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to the API!');
+});
+
 // Export as a serverless handler
 module.exports = serverless({ app });
