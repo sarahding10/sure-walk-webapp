@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const serverless = require('@vendia/serverless-express');
 
 // Import routes
 const riderRoutes = require('../routes/riderRoutes');
@@ -29,7 +28,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get('/favicon.ico', (req, res) => {
-  res.status(204).send();  // No content, no favicon served
+  res.status(204).send();  // No content
 });
 
 app.get('/favicon.png', (req, res) => {
@@ -41,5 +40,4 @@ app.get('/', (req, res) => {
   res.status(200).send('Welcome to the API!');
 });
 
-// Export as a serverless handler
-module.exports = serverless({ app });
+module.exports = app;
