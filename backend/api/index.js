@@ -1,17 +1,15 @@
-// server/server.js
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
 // Import routes
-const riderRoutes = require('./routes/riderRoutes');
-const driverRoutes = require('./routes/driverRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const authRoutes = require('./routes/authRoutes');
+const riderRoutes = require('../routes/riderRoutes');
+const driverRoutes = require('../routes/driverRoutes');
+const adminRoutes = require('../routes/adminRoutes');
+const authRoutes = require('../routes/authRoutes');
 
 // Initialize express app
 const app = express();
-const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(express.json());
@@ -29,7 +27,17 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: 'Server error', error: err.message });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).send();  // No content
 });
+
+app.get('/favicon.png', (req, res) => {
+  res.status(204).send();  // No content
+});
+
+// Handle root path ("/")
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to the API!');
+});
+
+module.exports = app;
